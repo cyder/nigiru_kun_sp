@@ -1,5 +1,8 @@
 import 'package:scoped_model/scoped_model.dart';
+import 'package:nigiru_kun/usecases/user_use_case.dart';
 
 class HomeViewModel extends Model {
-  final String userName = 'テストユーザ名';
+  UserUseCase useCase = new UserUseCase();
+
+  String get userName => useCase.userName;
 }
