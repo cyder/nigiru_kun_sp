@@ -1,4 +1,6 @@
+import 'package:nigiru_kun/entities/user_data.dart';
+
 class UserRepository {
-  String firstName = 'Atsushi';
-  String lastName = 'Mori';
+  UserData _user = new UserData('Atsushi', 'Mori');
+  UserData get currentUser => _user;
 }
