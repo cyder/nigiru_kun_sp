@@ -4,9 +4,15 @@ import 'package:nigiru_kun/ui/widget/tabs/home_tab.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab.dart';
 import 'package:nigiru_kun/ui/widget/tabs/record_tab.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
+import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
+import 'package:nigiru_kun/viewmodels/record_tab_view_mode.dart';
 
 class MainPage extends StatelessWidget {
   final viewModel = new MainViewModel();
+  final Widget homeTabWidget = new HomeTab();
+  final Widget challengeTabWidget = new ChallengeTab();
+  final Widget recordTabWidget = new RecordTab();
 
   @override
   Widget build(BuildContext context) {
@@ -15,49 +21,39 @@ class MainPage extends StatelessWidget {
         child: new ScopedModelDescendant<MainViewModel>(
             builder: (context, child, model) => Scaffold(
                   appBar: new AppBar(
-                    title: (() {
-                      switch (model.currentTab) {
-                        case Tabs.HomeTab:
-                          return new Text('にぎるくん');
-                        case Tabs.ChallengeTab:
-                          return new Text('Challangeモード');
-                        case Tabs.RecordTab:
-                          return new Text('Recordモード');
-                      }
-                    })(),
+                    title: _getTitleWidget(model.currentTab.title, model.currentTab.isHome),
                   ),
-                  body: (() {
-                    switch (model.currentTab) {
-                      case Tabs.HomeTab:
-                        return new HomeTab();
-                      case Tabs.ChallengeTab:
-                        return new ChallengeTab();
-                      case Tabs.RecordTab:
-                        return new RecordTab();
-                    }
-                  })(),
+                  body: _getTabWidget(model.currentTab.viewModel),
                   bottomNavigationBar: BottomNavigationBar(
-                    onTap: _onTabTapped,
-                    currentIndex: model.currentTab.index,
-                    items: [
-                      new BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        title: Text('Home'),
-                      ),
-                      new BottomNavigationBarItem(
-                        icon: Icon(Icons.star),
-                        title: Text('Challenge'),
-                      ),
-                      new BottomNavigationBarItem(
-                        icon: Icon(Icons.note),
-                        title: Text('Record'),
-                      ),
-                    ],
+                    onTap: model.selectTab,
+                    currentIndex: model.currentIndex,
+                    items: model.tabs.map((tab) => new BottomNavigationBarItem(
+                          icon: Icon(tab.icon),
+                          title: Text(tab.title),
+                        )).toList(),
                   ),
                 )));
   }
 
-  void _onTabTapped(int index) {
-    viewModel.selectTab(Tabs.values[index]);
+  // タブの中身のwidgetを返す
+  Widget _getTabWidget(Model viewModel) {
+    if (viewModel is HomeTabViewModel) {
+      return homeTabWidget;
+    }
+    if (viewModel is ChallengeTabViewModel) {
+      return challengeTabWidget;
+    }
+    if (viewModel is RecordTabViewModel) {
+      return recordTabWidget;
+    }
+    return null;
+  }
+
+  // タイトルウィジェットを返す
+  Widget _getTitleWidget(String title, bool isHome) {
+    if(isHome) {
+      return Text('にぎるくん'); //TODO: 画像に差し替え
+    }
+    return Text(title);
   }
 }
