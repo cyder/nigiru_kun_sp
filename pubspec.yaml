@@ -24,6 +24,8 @@ dependencies:
 
   flutter_blue: ^0.4.1
 
+  rxdart: ^0.19.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
