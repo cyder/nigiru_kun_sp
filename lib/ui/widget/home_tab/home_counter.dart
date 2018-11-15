@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
+import 'package:nigiru_kun/utils/color.dart';
 
 class HomeCounter extends StatelessWidget {
   @override
@@ -53,8 +54,8 @@ class HomeCounter extends StatelessWidget {
                   ],
                 ),
                 circularStrokeCap: CircularStrokeCap.round,
-                progressColor: Color(0xFFC54244),
-                backgroundColor: Color(0x33C54244),
+                progressColor: CustomColors.primaryColor,
+                backgroundColor: CustomColors.primaryTranslucentColor,
               ),
             ));
   }
