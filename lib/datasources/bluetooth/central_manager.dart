@@ -77,7 +77,7 @@ class CentralManager {
       _deviceStateSubject.add(s);
     });
 
-    //
+    // Add service
     _deviceStateSubscription = device.onStateChanged().listen((s){
       if (s == BluetoothDeviceState.connected) {
         device.discoverServices().then((s){
