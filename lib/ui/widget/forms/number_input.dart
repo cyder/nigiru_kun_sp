@@ -20,45 +20,45 @@ class NumberInput extends StatefulWidget {
 }
 
 class _NumberInputState extends State<NumberInput> {
-  final inputController = new TextEditingController();
-  final focusNode = new FocusNode();
+  final _inputController = new TextEditingController();
+  final _focusNode = new FocusNode();
 
   @override
   void initState() {
     super.initState();
 
-    focusNode.addListener(() {
-      if (focusNode.hasFocus) {
-        inputController.text = widget.value.toString();
-        inputController.selection = new TextSelection(
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        _inputController.text = widget.value.toString();
+        _inputController.selection = new TextSelection(
           baseOffset: 0,
-          extentOffset: inputController.text.length,
+          extentOffset: _inputController.text.length,
         );
       } else {
-        widget.onEditingComplete(inputController.text);
-        inputController.text = '${widget.value.toString()} ${widget.unit}';
+        widget.onEditingComplete(_inputController.text);
+        _inputController.text = '${widget.value.toString()} ${widget.unit}';
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (focusNode.hasFocus) {
-      inputController.text = widget.value.toString();
-      inputController.selection = new TextSelection(
+    if (_focusNode.hasFocus) {
+      _inputController.text = widget.value.toString();
+      _inputController.selection = new TextSelection(
         baseOffset: 0,
-        extentOffset: inputController.text.length,
+        extentOffset: _inputController.text.length,
       );
     } else {
-      inputController.text = '${widget.value.toString()} ${widget.unit}';
+      _inputController.text = '${widget.value.toString()} ${widget.unit}';
     }
 
     return new Container(
         margin: EdgeInsets.symmetric(vertical: 10),
         child: new TextField(
-          controller: inputController,
+          controller: _inputController,
           keyboardType: TextInputType.number,
-          focusNode: focusNode,
+          focusNode: _focusNode,
           inputFormatters: [WhitelistingTextInputFormatter(RegExp('[0-9]'))],
           decoration: InputDecoration(
             labelText: widget.labelText,
