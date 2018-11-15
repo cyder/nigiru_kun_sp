@@ -18,9 +18,13 @@ class CentralManager {
   /// Rx stream data
   /// stream scanResult can subscribe when discovered NIGIRUKUN device
   Observable<ScanResult> get scannedDevice =>
-      _subject.stream.where((scanResult) =>
-          scanResult.advertisementData.serviceUuids.first ==
-          _NIGIRU_KUN_SERVICE);
+      _subject.stream
+          .where((scanResult) => scanResult.advertisementData.connectable)
+          .where((scanResult) => scanResult.advertisementData.serviceUuids
+            .where((item) => item == _NIGIRU_KUN_SERVICE).length == 1
+          )
+          .distinct(([a, b]) => a.device.id.id == b.device.id.id);
+
 
   /// scan devices which has unique NIGIRUKUN service uuid
   /// - parameter timeout: [default 10 seconds] duration of scanning
