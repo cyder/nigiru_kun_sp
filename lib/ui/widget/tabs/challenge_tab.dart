@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
 import 'package:nigiru_kun/ui/widget/forms/radio_buttons.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/challenge_meter.dart';
+import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/best_challenge.dart';
 import 'package:nigiru_kun/utils/hand.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
@@ -35,7 +36,15 @@ class ChallengeTab extends StatelessWidget {
                       labelTextStyle: TextStyle(fontSize: 24.0),
                       activeColor: CustomColors.secondaryColor,
                     ),
-                    new Center(child: ChallengeMeter()),
+                    Center(child: ChallengeMeter()),
+                    Text(
+                      '自己ベスト',
+                      style: new TextStyle(
+                        fontSize: 32.0,
+                        color: CustomColors.secondaryColor,
+                      ),
+                    ),
+                    BestChallenge(),
                   ],
                 ),
               ))),
