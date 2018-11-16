@@ -13,12 +13,14 @@ class RadioButtons<T> extends StatelessWidget {
   final ValueChanged<T> onChange;
   final T value;
   final TextStyle labelTextStyle;
+  final Color activeColor;
 
   RadioButtons({
     @required this.items,
     this.onChange,
     this.value,
     this.labelTextStyle,
+    this.activeColor,
   });
 
   @override
@@ -35,6 +37,7 @@ class RadioButtons<T> extends StatelessWidget {
                         value: item.id,
                         groupValue: value,
                         onChanged: onChange,
+                        activeColor: activeColor,
                       ),
                       Text(
                         item.label,

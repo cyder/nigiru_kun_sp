@@ -8,7 +8,7 @@ class CircularBar extends StatelessWidget {
   final Color backgroundColor;
 
   CircularBar({
-    this.percent,
+    @required this.percent,
     this.center,
     this.progressColor,
     this.backgroundColor,

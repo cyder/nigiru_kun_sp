@@ -7,8 +7,6 @@ import 'package:nigiru_kun/ui/widget/bars/circular_bar.dart';
 class HomeCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-
     return new ScopedModelDescendant<HomeTabViewModel>(
         builder: (context, child, model) => new Container(
               margin: EdgeInsets.symmetric(vertical: 20),

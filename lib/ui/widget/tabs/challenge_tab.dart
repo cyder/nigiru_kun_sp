@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
 import 'package:nigiru_kun/ui/widget/forms/radio_buttons.dart';
+import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/challenge_meter.dart';
 import 'package:nigiru_kun/utils/hand.dart';
+import 'package:nigiru_kun/utils/color.dart';
 
 class ChallengeTab extends StatelessWidget {
   final ChallengeTabViewModel viewModel;
@@ -31,7 +33,9 @@ class ChallengeTab extends StatelessWidget {
                       onChange: model.handleCurrentHand,
                       value: model.currentHand,
                       labelTextStyle: TextStyle(fontSize: 24.0),
+                      activeColor: CustomColors.secondaryColor,
                     ),
+                    new Center(child: ChallengeMeter()),
                   ],
                 ),
               ))),
