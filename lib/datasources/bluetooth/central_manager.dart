@@ -2,36 +2,34 @@ import 'dart:async';
 import 'dart:core';
 import 'package:rxdart/subjects.dart';
 import 'package:rxdart/rxdart.dart';
-
 import 'package:flutter_blue/flutter_blue.dart';
+
+import 'nigirukun_peripheral.dart';
+import 'nigirukun_profile.dart';
 
 class CentralManager {
   /// private variables
-  FlutterBlue _flutterBlue = FlutterBlue.instance;
-  BluetoothDevice _device;
-  List<BluetoothService> _services;
+  final FlutterBlue _flutterBlue = FlutterBlue.instance;
+  NigirukunPeripheral _peripheral;
   StreamSubscription _scanSubscription;
   StreamSubscription<BluetoothDeviceState> _deviceConnection;
-  StreamSubscription<BluetoothDeviceState> _deviceStateSubscription;
   PublishSubject<ScanResult> _scanSubject = PublishSubject<ScanResult>();
   PublishSubject<BluetoothDeviceState> _deviceStateSubject = PublishSubject<BluetoothDeviceState>();
 
-  /// const value
-  static const String _NIGIRU_KUN_SERVICE =
-      "1db31f9a-9137-44da-9458-a4e642211773";
 
   /// connected device. if it's not connected, device will return null
-  BluetoothDevice get device => _device;
+  NigirukunPeripheral get peripheral => _peripheral;
 
   /// scan result data
   /// rx stream scanResult can subscribe when discovered NIGIRUKUN device
-  Observable<ScanResult> get scannedDevice =>
+  Observable<NigirukunPeripheral> get scannedDevice =>
       _scanSubject.stream
           .where((scanResult) => scanResult.advertisementData.connectable)
           .where((scanResult) => scanResult.advertisementData.serviceUuids
-            .where((item) => item == _NIGIRU_KUN_SERVICE).length == 1
+            .where((item) => item == NigirukunServicesProfile.NIGIRUKUN_SERVICE).length == 1
           )
-          .distinct(([a, b]) => a.device.id.id == b.device.id.id);
+          .map((scanResult) => NigirukunPeripheral.scanResult(scanResult))
+          .distinct(([a, b]) => a.uuid == b.uuid);
 
   /// connected bluetooth device state
   /// rx stream BluetoothDeviceState can subscribe when changed connection state
@@ -48,11 +46,6 @@ class CentralManager {
       timeout: Duration(seconds: timeout),
     )
         .listen((scanResult) {
-      print('localName: ${scanResult.advertisementData.localName}');
-      print('connectable: ${scanResult.advertisementData.connectable}');
-      print(
-          'manufacturerData: ${scanResult.advertisementData.manufacturerData}');
-      print('serviceData: ${scanResult.advertisementData.serviceData}');
       _scanSubject.add(scanResult);
     }, onDone: stopScan);
   }
@@ -66,34 +59,27 @@ class CentralManager {
 
   /// connect device
   /// - parameter device: try to connect device instance
-  connect(BluetoothDevice device) {
-    _device = device;
+  connect(NigirukunPeripheral peripheral) {
+    _peripheral = peripheral;
 
     // Connect to device
-    _deviceConnection = _flutterBlue.connect(device).listen(null, onDone: disconnect);
+    _deviceConnection = _flutterBlue.connect(peripheral.rawPeripheral).listen(null, onDone: disconnect);
 
     // Update the connection state
-    device.state.then((s){
+    peripheral.rawPeripheral.state.then((s){
       _deviceStateSubject.add(s);
     });
-
-    // Add service
-    _deviceStateSubscription = device.onStateChanged().listen((s){
-      if (s == BluetoothDeviceState.connected) {
-        device.discoverServices().then((s){
-          _services = s;
-        });
-      }
-    });
+    peripheral.connect();
+    peripheral.startNotify();
   }
 
   /// disconnect device
   disconnect() {
     _deviceConnection?.cancel();
-    _deviceStateSubscription = null;
     _deviceStateSubject.close();
     _deviceConnection?.cancel();
     _deviceConnection = null;
-    _device = null;
+    _peripheral.disconnect();
+    _peripheral = null;
   }
 }
