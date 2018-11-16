@@ -37,7 +37,7 @@ class NigirukunPeripheral {
   }
 
   /// connect peripheral. publish stream when discover services
-  connect() {
+  void connect() {
     _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s){
       if(s == BluetoothDeviceState.connected){
         _rawPeripheral.discoverServices().then((s){
@@ -49,13 +49,13 @@ class NigirukunPeripheral {
 
 
   /// disconnect peripheral
-  disconnect() {
+  void disconnect() {
     _deviceStateSubscription = null;
   }
 
 
   /// start Notify
-  startNotify() {
+  void startNotify() {
     _serviceStream
         .map((service) => service.characteristics)
         .listen((s) =>
@@ -66,7 +66,7 @@ class NigirukunPeripheral {
 
   /// switch with characteristic and readValues
   /// - parameter characteristic Bluetooth Characteristic
-  didNotify(BluetoothCharacteristic characteristic) async {
+  void didNotify(BluetoothCharacteristic characteristic) async {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
         await _rawPeripheral.setNotifyValue(characteristic, true);

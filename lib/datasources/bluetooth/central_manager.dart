@@ -37,7 +37,7 @@ class CentralManager {
 
   /// scan devices which has unique NIGIRUKUN service uuid
   /// - parameter timeout: [default 10 seconds] duration of scanning
-  startDeviceScan([int timeout = 10]) {
+  void startDeviceScan([int timeout = 10]) {
     if (_scanSubject.isClosed) {
       _scanSubject = PublishSubject<ScanResult>();
     }
@@ -51,7 +51,7 @@ class CentralManager {
   }
 
   /// stop scanning
-  stopScan() {
+  void stopScan() {
     _scanSubscription?.cancel();
     _scanSubscription = null;
     _scanSubject.close();
@@ -59,7 +59,7 @@ class CentralManager {
 
   /// connect device
   /// - parameter device: try to connect device instance
-  connect(NigirukunPeripheral peripheral) {
+  void connect(NigirukunPeripheral peripheral) {
     _peripheral = peripheral;
 
     // Connect to device
@@ -74,7 +74,7 @@ class CentralManager {
   }
 
   /// disconnect device
-  disconnect() {
+  void disconnect() {
     _deviceConnection?.cancel();
     _deviceStateSubject.close();
     _deviceConnection?.cancel();
