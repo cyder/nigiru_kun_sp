@@ -28,11 +28,11 @@ class HomeCounter extends StatelessWidget {
                       children: [
                         new Text(
                           '${model.currentGripNum}',
-                          style: new TextStyle(fontSize: 50.0),
+                          style: new TextStyle(fontSize: 40.0),
                         ),
                         new Text(
                           ' / ${model.goalGripNum} 回',
-                          style: new TextStyle(fontSize: 20.0),
+                          style: new TextStyle(fontSize: 16.0),
                         ),
                       ],
                     ),
@@ -43,11 +43,11 @@ class HomeCounter extends StatelessWidget {
                       children: [
                         new Text(
                           '${(model.achievementRate * 100).toStringAsFixed(1)}',
-                          style: new TextStyle(fontSize: 50.0),
+                          style: new TextStyle(fontSize: 40.0),
                         ),
                         new Text(
                           ' %',
-                          style: new TextStyle(fontSize: 20.0),
+                          style: new TextStyle(fontSize: 16.0),
                         ),
                       ],
                     ),
