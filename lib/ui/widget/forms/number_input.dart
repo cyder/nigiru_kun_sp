@@ -26,19 +26,13 @@ class _NumberInputState extends State<NumberInput> {
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(_handleFocus);
+  }
 
-    _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        _inputController.text = widget.value.toString();
-        _inputController.selection = new TextSelection(
-          baseOffset: 0,
-          extentOffset: _inputController.text.length,
-        );
-      } else {
-        widget.onEditingComplete(_inputController.text);
-        _inputController.text = '${widget.value.toString()} ${widget.unit}';
-      }
-    });
+  @override
+  void dispose(){
+    _focusNode.removeListener(_handleFocus);
+    super.dispose();
   }
 
   @override
@@ -65,5 +59,18 @@ class _NumberInputState extends State<NumberInput> {
             border: new OutlineInputBorder(),
           ),
         ));
+  }
+
+  void _handleFocus() {
+    if (_focusNode.hasFocus) {
+      _inputController.text = widget.value.toString();
+      _inputController.selection = new TextSelection(
+        baseOffset: 0,
+        extentOffset: _inputController.text.length,
+      );
+    } else {
+      widget.onEditingComplete(_inputController.text);
+      _inputController.text = '${widget.value.toString()} ${widget.unit}';
+    }
   }
 }

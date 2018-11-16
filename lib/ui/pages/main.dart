@@ -22,25 +22,28 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return new ScopedModel<MainViewModel>(
-        model: viewModel,
-        child: new ScopedModelDescendant<MainViewModel>(
-            builder: (context, child, model) => Scaffold(
-                  appBar: new AppBar(
-                    title: _getTitleWidget(
-                        model.currentTab.title, model.currentTab.isHome),
-                  ),
-                  body: _getTabWidget(model.currentTab.viewModel),
-                  bottomNavigationBar: BottomNavigationBar(
-                    onTap: model.selectTab,
-                    currentIndex: model.currentIndex,
-                    items: model.tabs
-                        .map((tab) => new BottomNavigationBarItem(
-                              icon: Icon(tab.icon),
-                              title: Text(tab.title),
-                            ))
-                        .toList(),
-                  ),
-                )));
+      model: viewModel,
+      child: new ScopedModelDescendant<MainViewModel>(
+          builder: (context, child, model) => GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+              child: Scaffold(
+                appBar: new AppBar(
+                  title: _getTitleWidget(
+                      model.currentTab.title, model.currentTab.isHome),
+                ),
+                body: _getTabWidget(model.currentTab.viewModel),
+                bottomNavigationBar: BottomNavigationBar(
+                  onTap: model.selectTab,
+                  currentIndex: model.currentIndex,
+                  items: model.tabs
+                      .map((tab) => new BottomNavigationBarItem(
+                            icon: Icon(tab.icon),
+                            title: Text(tab.title),
+                          ))
+                      .toList(),
+                ),
+              ))),
+    );
   }
 
   // タブの中身のwidgetを返す
