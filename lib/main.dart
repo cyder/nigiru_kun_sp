@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nigiru_kun/ui/pages/main.dart';
+import 'package:nigiru_kun/utils/color.dart';
 
 void main() => runApp(new App());
 
@@ -11,7 +12,7 @@ class App extends StatelessWidget {
       title: 'にぎるくん',
       theme: new ThemeData(
         brightness: Brightness.dark,
-        accentColor: Color(0xFFC54244),
+        accentColor: CustomColors.primaryColor,
       ),
       home: new MainPage(),
     );
