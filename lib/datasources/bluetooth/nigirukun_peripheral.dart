@@ -62,29 +62,15 @@ class NigirukunPeripheral {
   void startNotify() {
     _serviceStream
       .map((item) => item.characteristics)
-      .listen((s){
-        // FIX ME
-        List<BluetoothCharacteristic> _filtered = List(2);
-        int _index = 0;
-        s.forEach((characteristic){
-          if(characteristic.uuid.toString() == NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC ||
-              characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC){
-              _filtered[_index++] = characteristic;
+      .listen((s) {
+        Future.forEach(s, (characteristic) async {
+          if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC ||
+            characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC){
+            await _rawPeripheral.setNotifyValue(characteristic, true);
           }
         });
-        _setNotify(_filtered[0]);
-        Future.delayed(new Duration(seconds: 1), () {
-          _setNotify(_filtered[1]);
-        });
-        _filtered.forEach((item) => didNotify(item));
+        s.forEach((item) => didNotify(item));
       });
-  }
-
-  void _setNotify(BluetoothCharacteristic characteristic) {
-    if(characteristic.uuid.toString() == NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC ||
-      characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC){
-      _rawPeripheral.setNotifyValue(characteristic, true);
-    }
   }
 
 
