@@ -26,17 +26,47 @@ class ChallengeTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RadioButtons<Hand>(
-                      items: [
-                        RadioItem(id: Hand.Left, label: '左手'),
-                        RadioItem(id: Hand.Right, label: '右手'),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: RadioButtons<Hand>(
+                            items: [
+                              RadioItem(id: Hand.Left, label: '左手'),
+                              RadioItem(id: Hand.Right, label: '右手'),
+                            ],
+                            onChange: model.handleCurrentHand,
+                            value: model.currentHand,
+                            labelTextStyle: TextStyle(fontSize: 20.0),
+                            activeColor: CustomColors.secondaryColor,
+                          ),
+                        ),
+                        model.currentState == ChallengeState.StandBy
+                            ? RaisedButton(
+                                child: Text(
+                                  '開始',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                onPressed: model.startChallenge,
+                                color: CustomColors.secondaryColor,
+                              )
+                            : FlatButton(
+                                child: Text(
+                                  'キャンセル',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white54,
+                                  ),
+                                ),
+                                onPressed: model.cancelChallenge,
+                              ),
                       ],
-                      onChange: model.handleCurrentHand,
-                      value: model.currentHand,
-                      labelTextStyle: TextStyle(fontSize: 24.0),
-                      activeColor: CustomColors.secondaryColor,
                     ),
-                    Center(child: ChallengeMeter()),
+                    Opacity(
+                      opacity: model.currentState == ChallengeState.StandBy
+                          ? 0.2
+                          : 1.0,
+                      child: Center(child: ChallengeMeter()),
+                    ),
                     Text(
                       '自己ベスト',
                       style: new TextStyle(
