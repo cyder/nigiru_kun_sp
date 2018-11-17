@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
 import 'package:nigiru_kun/utils/color.dart';
+import 'package:nigiru_kun/ui/widget/bars/circular_bar.dart';
 
 class HomeCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size;
-
     return new ScopedModelDescendant<HomeTabViewModel>(
         builder: (context, child, model) => new Container(
               margin: EdgeInsets.symmetric(vertical: 20),
-              child: new CircularPercentIndicator(
-                radius: size.width * 0.8,
-                lineWidth: 30.0,
-                animation: true,
+              child: CircularBar(
                 percent:
                     model.achievementRate < 1.0 ? model.achievementRate : 1.0,
                 center: new Column(
@@ -53,7 +48,6 @@ class HomeCounter extends StatelessWidget {
                     ),
                   ],
                 ),
-                circularStrokeCap: CircularStrokeCap.round,
                 progressColor: CustomColors.primaryColor,
                 backgroundColor: CustomColors.primaryTranslucentColor,
               ),
