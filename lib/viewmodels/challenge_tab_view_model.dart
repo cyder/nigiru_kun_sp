@@ -1,5 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'package:nigiru_kun/utils/hand.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
 
@@ -10,14 +12,23 @@ enum ChallengeState {
   Error,
 }
 
+enum DialogType {
+  Finished,
+  Error,
+  Close,
+}
+
 class ChallengeTabViewModel extends Model {
+  final int maxForce = 150;
   Hand _currentHand = Hand.Right;
   ChallengeData _rightBest =
       ChallengeData(Hand.Right, 120, DateTime(2018, 10, 14));
   ChallengeData _leftBest =
       ChallengeData(Hand.Left, 60, DateTime(2018, 10, 16));
   final formatter = DateFormat('yyyy.MM.dd');
+  PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
   ChallengeState _currentState = ChallengeState.StandBy;
+  int _currentForce = 50;
 
   Hand get currentHand => _currentHand;
 
@@ -29,7 +40,13 @@ class ChallengeTabViewModel extends Model {
 
   String get leftBestDate => formatter.format(_leftBest.date);
 
+  int get currentForce => _currentForce;
+
+  double get currentForceRatio => _currentForce / maxForce;
+
   ChallengeState get currentState => _currentState;
+
+  PublishSubject<DialogType> get currentDialog => _currentDialog;
 
   String get currentHandName {
     switch (_currentHand) {
@@ -50,11 +67,25 @@ class ChallengeTabViewModel extends Model {
 
   void startChallenge() {
     _currentState = ChallengeState.Doing;
+    _currentDialog.add(DialogType.Finished); //TODO: 本来は測定が終わったタイミングで出す。
+    notifyListeners();
+  }
+
+  void saveChallenge() {
+    _currentState = ChallengeState.StandBy;
     notifyListeners();
   }
 
   void cancelChallenge() {
     _currentState = ChallengeState.StandBy;
     notifyListeners();
+  }
+
+  void init() {
+    _currentDialog = PublishSubject<DialogType>();
+  }
+
+  void dispose() {
+    _currentDialog.close();
   }
 }

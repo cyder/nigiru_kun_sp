@@ -11,7 +11,7 @@ class ChallengeMeter extends StatelessWidget {
         builder: (context, child, model) => new Container(
               margin: EdgeInsets.symmetric(vertical: 20),
               child: CircularBar(
-                percent: 0.5,
+                percent: model.currentForceRatio,
                 progressColor: CustomColors.secondaryColor,
                 backgroundColor: CustomColors.secondaryTranslucentColor,
                 center: Column(
@@ -27,7 +27,7 @@ class ChallengeMeter extends StatelessWidget {
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         new Text(
-                          '48',
+                          model.currentForce.toString(),
                           style: new TextStyle(fontSize: 50.0),
                         ),
                         new Text(
