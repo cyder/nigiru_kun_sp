@@ -39,8 +39,23 @@ class _MainPageState extends State<MainPage> {
                   currentIndex: model.currentIndex,
                   items: model.tabs
                       .map((tab) => new BottomNavigationBarItem(
-                            icon: Icon(tab.icon),
-                            title: Text(tab.title),
+                            icon: Container(
+                              margin: EdgeInsets.only(top: 1.0, bottom: 3.0),
+                              width: 22,
+                              height: 22,
+                              child: SvgPicture.asset(
+                                tab.svgIconPath,
+                                color:
+                                    tab.isSelected ? tab.color : Colors.white54,
+                              ),
+                            ),
+                            title: Text(
+                              tab.title,
+                              style: TextStyle(
+                                  color: tab.isSelected
+                                      ? tab.color
+                                      : Colors.white54),
+                            ),
                           ))
                       .toList(),
                 ),
