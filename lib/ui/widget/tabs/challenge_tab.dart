@@ -7,7 +7,7 @@ import 'package:nigiru_kun/ui/widget/dialogs/error_dialog.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/challenge_meter.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/best_challenge.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/finished_dialog.dart';
-import 'package:nigiru_kun/utils/hand.dart';
+import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
 class ChallengeTab extends StatefulWidget {
@@ -50,7 +50,7 @@ class _ChallengeTabState extends State<ChallengeTab> {
                   buttonColor: CustomColors.secondaryColor,
                   callback: viewModel.cancelChallenge,
                 );
-              default:
+              case DialogType.Close:
                 return null;
             }
           });

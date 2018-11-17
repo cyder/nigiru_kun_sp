@@ -1,4 +1,4 @@
-import 'package:nigiru_kun/utils/hand.dart';
+import 'package:nigiru_kun/entities/hand.dart';
 
 class ChallengeData {
   Hand hand;

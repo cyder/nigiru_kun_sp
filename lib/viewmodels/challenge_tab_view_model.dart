@@ -2,7 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:nigiru_kun/utils/hand.dart';
+import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
 
 enum ChallengeState {
