@@ -22,6 +22,21 @@ class _MainPageState extends State<MainPage> {
   Widget recordTabWidget;
 
   @override
+  void initState() {
+    super.initState();
+    viewModel.init();
+    viewModel.nextPage.listen((page) {
+      Navigator.of(context).pushNamed(page);
+    });
+  }
+
+  @override
+  void dispose() {
+    viewModel.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new ScopedModel<MainViewModel>(
       model: viewModel,

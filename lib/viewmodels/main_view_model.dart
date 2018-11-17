@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
 import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
@@ -25,11 +26,14 @@ class Tab {
 
 class Menu {
   final String title;
+  final Function callback;
 
-  Menu(this.title);
+  Menu({this.title, this.callback});
 }
 
 class MainViewModel extends Model {
+  PublishSubject<String> _nextPage = PublishSubject<String>();
+
   final tabs = [
     new Tab(
       'HOME',
@@ -54,9 +58,7 @@ class MainViewModel extends Model {
     ),
   ];
 
-  final menus = <Menu>[
-    Menu('にぎるくんと接続'),
-  ];
+  List<Menu> menus;
 
   int _currentIndex = 0;
 
@@ -64,7 +66,14 @@ class MainViewModel extends Model {
 
   int get currentIndex => _currentIndex;
 
+  PublishSubject<String> get nextPage => _nextPage;
+
   MainViewModel() {
+    menus = <Menu>[
+      Menu(title: 'にぎるくんと接続', callback: () {
+        _nextPage.add('/bluetooth');
+      }),
+    ];
     tabs[_currentIndex].isSelected = true;
   }
 
@@ -76,6 +85,14 @@ class MainViewModel extends Model {
   }
 
   void selectMenu(Menu menu) {
+    menu.callback();
+  }
 
+  void init() {
+    _nextPage = PublishSubject<String>();
+  }
+
+  void dispose() {
+    _nextPage.close();
   }
 }
