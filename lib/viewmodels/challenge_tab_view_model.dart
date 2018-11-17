@@ -32,9 +32,9 @@ class ChallengeTabViewModel extends Model {
 
   Hand get currentHand => _currentHand;
 
-  int get rightBestWeight => _rightBest.weight.floor();
+  int get rightBestForce => _rightBest.force.floor();
 
-  int get leftBestWeight => _leftBest.weight.floor();
+  int get leftBestForce => _leftBest.force.floor();
 
   String get rightBestDate => formatter.format(_rightBest.date);
 

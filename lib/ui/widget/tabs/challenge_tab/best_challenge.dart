@@ -28,7 +28,7 @@ class BestChallenge extends StatelessWidget {
                           textBaseline: TextBaseline.alphabetic,
                           children: [
                             new Text(
-                              model.leftBestWeight.toString(),
+                              model.leftBestForce.toString(),
                               style: new TextStyle(fontSize: 32.0),
                             ),
                             new Text(
@@ -58,7 +58,7 @@ class BestChallenge extends StatelessWidget {
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 new Text(
-                                  model.rightBestWeight.toString(),
+                                  model.rightBestForce.toString(),
                                   style: new TextStyle(fontSize: 32.0),
                                 ),
                                 new Text(
