@@ -32,6 +32,19 @@ class _MainPageState extends State<MainPage> {
                 appBar: new AppBar(
                   title: _getTitleWidget(
                       model.currentTab.title, model.currentTab.isHome),
+                  actions: <Widget>[
+                    PopupMenuButton<Menu>(
+                      onSelected: model.selectMenu,
+                      itemBuilder: (BuildContext context) {
+                        return model.menus
+                            .map((menu) => PopupMenuItem<Menu>(
+                                  value: menu,
+                                  child: Text(menu.title),
+                                ))
+                            .toList();
+                      },
+                    )
+                  ],
                 ),
                 body: _getTabWidget(model.currentTab.viewModel),
                 bottomNavigationBar: BottomNavigationBar(

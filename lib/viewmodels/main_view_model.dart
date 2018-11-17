@@ -23,6 +23,12 @@ class Tab {
   );
 }
 
+class Menu {
+  final String title;
+
+  Menu(this.title);
+}
+
 class MainViewModel extends Model {
   final tabs = [
     new Tab(
@@ -48,6 +54,10 @@ class MainViewModel extends Model {
     ),
   ];
 
+  final menus = <Menu>[
+    Menu('にぎるくんと接続'),
+  ];
+
   int _currentIndex = 0;
 
   Tab get currentTab => tabs[_currentIndex];
@@ -63,5 +73,9 @@ class MainViewModel extends Model {
     _currentIndex = index;
     tabs[index].isSelected = true;
     notifyListeners();
+  }
+
+  void selectMenu(Menu menu) {
+
   }
 }
