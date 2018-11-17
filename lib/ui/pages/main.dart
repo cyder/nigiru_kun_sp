@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:scoped_model/scoped_model.dart';
+
 import 'package:nigiru_kun/viewmodels/main_view_model.dart';
 import 'package:nigiru_kun/ui/widget/tabs/home_tab.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab.dart';
 import 'package:nigiru_kun/ui/widget/tabs/record_tab.dart';
-import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
 import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
 import 'package:nigiru_kun/viewmodels/record_tab_view_mode.dart';
@@ -64,8 +66,21 @@ class _MainPageState extends State<MainPage> {
   // タイトルウィジェットを返す
   Widget _getTitleWidget(String title, bool isHome) {
     if (isHome) {
-      return Text('にぎるくん'); //TODO: 画像に差し替え
+      return Container(
+        margin: EdgeInsets.symmetric(vertical: 15.0),
+        child: SvgPicture.asset(
+          'assets/svg/logo.svg',
+          alignment: Alignment.centerLeft,
+          color: Colors.white,
+        ),
+      );
     }
-    return Text(title);
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 20.0),
+      ),
+    );
   }
 }
