@@ -4,21 +4,29 @@ import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'nigirukun_profile.dart';
+import 'nigirukun_processor.dart';
 
 class NigirukunPeripheral {
   /// private variables
   BluetoothDevice _rawPeripheral;
   StreamSubscription<BluetoothDeviceState> _deviceStateSubscription;
-  List<BluetoothCharacteristic> characteristics;
   PublishSubject<BluetoothService> _serviceStream = PublishSubject<BluetoothService>();
   PublishSubject<List<int>> _forceStream = PublishSubject<List<int>>();
-  PublishSubject<List<int>> _countStream = PublishSubject<List<int>>();
+  PublishSubject<int> _countStream = PublishSubject<int>();
 
   /// NIGIRUUN unique uuid
   String uuid;
 
   /// NIGIRUKUN rssi. When the device is advertisement mode, you can refer to this variable
   int rssi;
+
+  /// stream 4-finger force data
+  /// rx stream data
+  Observable<List<int>> get forceStream => _forceStream.stream;
+
+  /// stream count data
+  /// rx stream data
+  Observable<int> get countStream => _countStream.stream;
 
   //TODO it should be private parameter
   BluetoothDevice get rawPeripheral => _rawPeripheral;
@@ -45,7 +53,6 @@ class NigirukunPeripheral {
       if(s == BluetoothDeviceState.connected){
         _rawPeripheral.discoverServices().then((s){
           s.forEach((item) => _serviceStream.add(item));
-          characteristics = s.map((item) => item.characteristics).fold([], ([prev, item]) {item.forEach((item) => prev.add(item));return prev;});
         });
       }
     });
@@ -81,14 +88,14 @@ class NigirukunPeripheral {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
-          _forceStream.add(value);
+          _forceStream.add(NigirukunDataProcessor().toForce(value));
           print('force -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
         });
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
-          _countStream.add(value);
+          _countStream.add(NigirukunDataProcessor().toCount(value));
           print('count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
         });
