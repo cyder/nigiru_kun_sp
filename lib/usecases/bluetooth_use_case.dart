@@ -28,4 +28,9 @@ class BluetoothUseCase {
   void disconnect(NigirukunPeripheral peripheral) {
     repository.connect(peripheral);
   }
+
+  Peripheral get connectedPeripheral {
+    NigirukunPeripheral nigirikun = repository.connectedNigirukunPeripheral;
+    return Peripheral('にぎるくん', nigirikun.uuid);
+  }
 }
