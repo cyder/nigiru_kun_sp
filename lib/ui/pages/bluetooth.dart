@@ -15,35 +15,50 @@ class BluetoothPage extends StatelessWidget {
           builder: (context, child, model) => GestureDetector(
                 onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
                 child: Scaffold(
-                    appBar: new AppBar(
-                      title: Text('にぎるくんと接続'),
-                    ),
-                    body: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 30.0,
-                        horizontal: 20.0,
-                      ),
-                      child: new Column(
-                        children: [
-                          Expanded(child: Text(model.message)),
-                          RaisedButton(
-                            onPressed: model.handleButton,
-                            color: CustomColors.primaryColor,
-                            child: FractionallySizedBox(
-                              widthFactor: 1,
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  margin: EdgeInsets.symmetric(vertical: 16),
-                                  child: Text(
-                                    model.buttonLabel,
-                                    style: TextStyle(fontSize: 16.0),
-                                  )),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )),
+                  appBar: AppBar(
+                    title: Text('にぎるくんと接続'),
+                  ),
+                  body: _content(model),
+                ),
               )),
     );
   }
+
+  Widget _content(BluetoothViewModel model) => Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 30.0,
+          horizontal: 20.0,
+        ),
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                bottom: 30.0,
+                left: 30.0,
+                right: 30.0,
+              ),
+              child: Opacity(
+                opacity:
+                    model.currentState == BluetoothState.Connected ? 1.0 : 0.3,
+                child: Image.asset('assets/images/peripheral.png'),
+              ),
+            ),
+            Expanded(child: Text(model.message)),
+            RaisedButton(
+              onPressed: model.handleButton,
+              color: CustomColors.primaryColor,
+              child: FractionallySizedBox(
+                widthFactor: 1,
+                child: Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(vertical: 16),
+                    child: Text(
+                      model.buttonLabel,
+                      style: TextStyle(fontSize: 16.0),
+                    )),
+              ),
+            ),
+          ],
+        ),
+      );
 }
