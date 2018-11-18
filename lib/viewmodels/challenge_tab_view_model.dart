@@ -1,4 +1,3 @@
-import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -25,20 +24,15 @@ class ChallengeTabViewModel extends Model {
       ChallengeData(Hand.Right, 120, DateTime(2018, 10, 14));
   ChallengeData _leftBest =
       ChallengeData(Hand.Left, 60, DateTime(2018, 10, 16));
-  final formatter = DateFormat('yyyy.MM.dd');
   PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
   ChallengeState _currentState = ChallengeState.StandBy;
   int _currentForce = 50;
 
   Hand get currentHand => _currentHand;
 
-  int get rightBestForce => _rightBest.force.floor();
+  ChallengeData get rightBest => _rightBest;
 
-  int get leftBestForce => _leftBest.force.floor();
-
-  String get rightBestDate => formatter.format(_rightBest.date);
-
-  String get leftBestDate => formatter.format(_leftBest.date);
+  ChallengeData get leftBest => _leftBest;
 
   int get currentForce => _currentForce;
 

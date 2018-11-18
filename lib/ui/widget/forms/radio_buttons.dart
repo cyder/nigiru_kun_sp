@@ -26,9 +26,10 @@ class RadioButtons<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: items
           .map((item) => Container(
-                margin: EdgeInsets.symmetric(horizontal: 5),
+                margin: EdgeInsets.only(right: 5),
                 child: InkWell(
                   child: Row(
                     children: [
