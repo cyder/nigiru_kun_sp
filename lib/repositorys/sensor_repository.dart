@@ -8,14 +8,20 @@ abstract class SensorRepository {
 }
 
 class SensorRepositoryImpl implements SensorRepository {
+  /// Singleton
+  static final SensorRepositoryImpl _singleton = SensorRepositoryImpl._internal();
+
+  SensorRepositoryImpl._internal();
+
+  factory SensorRepositoryImpl() {
+    return _singleton;
+  }
+
   CentralManager manager = CentralManager();
 
   @override
   Observable<NigirukunCountSensorData> get observeCount {
-
-    manager.startDeviceScan();
     manager.scannedDevice.listen((peripheral) => manager.connect(peripheral));
     return manager.countStream;
   }
-
 }

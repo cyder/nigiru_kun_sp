@@ -9,6 +9,15 @@ import 'nigirukun_profile.dart';
 import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart';
 
 class CentralManager {
+
+  /// Singleton
+  static final CentralManager _singleton = CentralManager._internal();
+  CentralManager._internal();
+
+  factory CentralManager() {
+    return _singleton;
+  }
+
   /// private variables
   final FlutterBlue _flutterBlue = FlutterBlue.instance;
   NigirukunPeripheral _peripheral;
