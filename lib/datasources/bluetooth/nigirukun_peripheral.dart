@@ -5,6 +5,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'nigirukun_profile.dart';
 import 'nigirukun_processor.dart';
+import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart'
 
 class NigirukunPeripheral {
   /// private variables
@@ -26,7 +27,9 @@ class NigirukunPeripheral {
 
   /// stream count data
   /// rx stream data
-  Observable<int> get countStream => _countStream.stream;
+  Observable<NigirukunCountSensorData> get countStream =>
+      _countStream.stream
+          .map((count) => NigirukunCountSensorData.count(count));
 
   //TODO it should be private parameter
   BluetoothDevice get rawPeripheral => _rawPeripheral;
