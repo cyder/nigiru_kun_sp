@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/challenge_tab_view_model.dart';
 
-import 'package:nigiru_kun/ui/widget/forms/radio_buttons.dart';
 import 'package:nigiru_kun/ui/widget/dialogs/error_dialog.dart';
+import 'package:nigiru_kun/ui/widget/buttons/wide_button.dart';
+import 'package:nigiru_kun/ui/widget/buttons/wide_flat_button.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/challenge_meter.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/best_challenge.dart';
 import 'package:nigiru_kun/ui/widget/tabs/challenge_tab/finished_dialog.dart';
-import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
 class ChallengeTab extends StatefulWidget {
@@ -68,67 +68,31 @@ class _ChallengeTabState extends State<ChallengeTab> {
     return ScopedModel<ChallengeTabViewModel>(
       model: viewModel,
       child: ScopedModelDescendant<ChallengeTabViewModel>(
-          builder: (context, child, model) => SingleChildScrollView(
-                  child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 20.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: RadioButtons<Hand>(
-                            items: [
-                              RadioItem(id: Hand.Left, label: '左手'),
-                              RadioItem(id: Hand.Right, label: '右手'),
-                            ],
-                            onChange: model.handleCurrentHand,
-                            value: model.currentHand,
-                            labelTextStyle: TextStyle(fontSize: 20.0),
-                            activeColor: CustomColors.secondaryColor,
-                          ),
+        builder: (context, child, model) => Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: 20.0,
+                horizontal: 20.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BestChallenge(),
+                  Expanded(child: Center(child: ChallengeMeter())),
+                  model.currentState == ChallengeState.StandBy
+                      ? WideButton(
+                          label: '開始',
+                          onPressed: model.startChallenge,
+                          color: CustomColors.secondaryColor,
+                        )
+                      : WideFlatButton(
+                          label: 'キャンセル',
+                          onPressed: model.cancelChallenge,
+                          fontColor: Colors.white54,
                         ),
-                        model.currentState == ChallengeState.StandBy
-                            ? RaisedButton(
-                                child: Text(
-                                  '開始',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                onPressed: model.startChallenge,
-                                color: CustomColors.secondaryColor,
-                              )
-                            : FlatButton(
-                                child: Text(
-                                  'キャンセル',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white54,
-                                  ),
-                                ),
-                                onPressed: model.cancelChallenge,
-                              ),
-                      ],
-                    ),
-                    Opacity(
-                      opacity: model.currentState == ChallengeState.StandBy
-                          ? 0.2
-                          : 1.0,
-                      child: Center(child: ChallengeMeter()),
-                    ),
-                    Text(
-                      '自己ベスト',
-                      style: new TextStyle(
-                        fontSize: 32.0,
-                        color: CustomColors.secondaryColor,
-                      ),
-                    ),
-                    BestChallenge(),
-                  ],
-                ),
-              ))),
+                ],
+              ),
+            ),
+      ),
     );
   }
 }
