@@ -74,8 +74,12 @@ class NigirukunPeripheral {
       .map((item) => item.characteristics)
       .listen((s) {
         Future.forEach(s, (characteristic) async {
-          if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC ||
-            characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC){
+          if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC) {
+            await _rawPeripheral.setNotifyValue(characteristic, true);
+          }
+          if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC) {
+            // reset
+            writeValue(characteristic, [0, 0, 0, 0]);
             await _rawPeripheral.setNotifyValue(characteristic, true);
           }
         });
@@ -101,14 +105,17 @@ class NigirukunPeripheral {
           _countStream.add(NigirukunDataProcessor().toCount(value));
           print('count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
+          // reset
+          writeValue(characteristic, [0, 0, 0, 0]);
         });
+
         break;
       default:
         break;
     }
   }
 
-  void writeValue(BluetoothCharacteristic characteristic, List<int> value) {
-
+  Future<void> writeValue(BluetoothCharacteristic characteristic, List<int> value) async {
+    await _rawPeripheral.writeCharacteristic(characteristic, value);
   }
 }
