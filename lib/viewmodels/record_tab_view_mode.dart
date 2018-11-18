@@ -5,6 +5,7 @@ import 'dart:math' as math;
 
 import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
+import 'package:nigiru_kun/utils/color.dart';
 
 class HomeData {
   final DateTime date;
@@ -61,7 +62,7 @@ class RecordTabViewModel extends Model {
     _homeSeriesList = [
       Series<HomeData, DateTime>(
         id: 'home',
-        colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => CustomColors.primaryChartColor,
         domainFn: (HomeData data, _) => data.date,
         measureFn: (HomeData data, _) => data.count,
         data: homeData,
@@ -72,7 +73,7 @@ class RecordTabViewModel extends Model {
       Series<ChallengeData, DateTime>(
         id: 'rightHand',
         displayName: '右手',
-        colorFn: (_, __) => MaterialPalette.red.shadeDefault,
+        colorFn: (_, __) => CustomColors.secondaryChartColor,
         domainFn: (ChallengeData data, _) => data.date,
         measureFn: (ChallengeData data, _) => data.force,
         data: rightHandChallengeData,
@@ -80,7 +81,7 @@ class RecordTabViewModel extends Model {
       Series<ChallengeData, DateTime>(
         id: 'leftHand',
         displayName: '左手',
-        colorFn: (_, __) => MaterialPalette.blue.shadeDefault,
+        colorFn: (_, __) => CustomColors.tertiaryChartColor,
         domainFn: (ChallengeData data, _) => data.date,
         measureFn: (ChallengeData data, _) => data.force,
         data: leftHandChallengeData,
