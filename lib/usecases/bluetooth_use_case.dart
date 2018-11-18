@@ -25,8 +25,8 @@ class BluetoothUseCase {
         _nigirukunList.where((nigirukun) => nigirukun.uuid == id).first);
   }
 
-  void disconnect(NigirukunPeripheral peripheral) {
-    repository.connect(peripheral);
+  void disconnect() {
+    repository.disconnect();
   }
 
   Peripheral get connectedPeripheral {
