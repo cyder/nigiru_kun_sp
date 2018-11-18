@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'package:nigiru_kun/viewmodels/record_tab_view_mode.dart';
 import 'package:nigiru_kun/ui/widget/charts/bar_times_chart.dart';
+import 'package:nigiru_kun/ui/widget/charts/times_chart.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
 class RecordTab extends StatelessWidget {
@@ -18,7 +19,7 @@ class RecordTab extends StatelessWidget {
           builder: (context, child, model) => SingleChildScrollView(
                   child: Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: 30.0,
+                  vertical: 20.0,
                   horizontal: 20.0,
                 ),
                 child: Column(
@@ -42,6 +43,11 @@ class RecordTab extends StatelessWidget {
                         fontSize: 32.0,
                         color: CustomColors.secondaryColor,
                       ),
+                    ),
+                    Container(
+                      height: 220.0,
+                      margin: EdgeInsets.only(top: 10.0, bottom: 20.0),
+                      child: TimesChart(model.challengeSeriesList),
                     ),
                   ],
                 ),
