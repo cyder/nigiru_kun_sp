@@ -5,7 +5,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'nigirukun_profile.dart';
 import 'nigirukun_processor.dart';
-import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart'
+import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart';
 
 class NigirukunPeripheral {
   /// private variables

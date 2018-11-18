@@ -8,16 +8,14 @@ abstract class SensorRepository {
 }
 
 class SensorRepositoryImpl implements SensorRepository {
-  CentralManager manager = new CentralManager();
+  CentralManager manager = CentralManager();
 
   @override
   Observable<NigirukunCountSensorData> get observeCount {
-    // in case of not connected
-    if (manager.peripheral == null) {
-      return null;
-    }
 
-    return manager.peripheral.countStream;
+    manager.startDeviceScan();
+    manager.scannedDevice.listen((peripheral) => manager.connect(peripheral));
+    return manager.countStream;
   }
 
 }
