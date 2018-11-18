@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
-import 'package:nigiru_kun/ui/widget/home_tab/home_counter.dart';
+import 'package:nigiru_kun/ui/widget/tabs/home_tab/home_counter.dart';
 import 'package:nigiru_kun/ui/widget/forms/number_input.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
