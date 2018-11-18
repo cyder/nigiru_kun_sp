@@ -2,16 +2,70 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:nigiru_kun/viewmodels/bluetooth_view_model.dart';
+import 'package:nigiru_kun/ui/widget/dialogs/error_dialog.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
-class BluetoothPage extends StatelessWidget {
+class BluetoothPage extends StatefulWidget {
   final viewModel = new BluetoothViewModel();
+
+  @override
+  _BluetoothPageState createState() => new _BluetoothPageState(viewModel);
+}
+
+class _BluetoothPageState extends State<BluetoothPage> {
+  final BluetoothViewModel viewModel;
+
+  _BluetoothPageState(this.viewModel);
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.init();
+    viewModel.currentDialog.listen((data) {
+      if (data == DialogType.Close) {
+        Navigator.of(context).pop();
+        return;
+      }
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            switch (data) {
+              case DialogType.Select:
+                return ScopedModel<BluetoothViewModel>(
+                  model: viewModel,
+                  child: ScopedModelDescendant<BluetoothViewModel>(
+                    builder: (context, child, model) => _selectDialog(model),
+                  ),
+                );
+              case DialogType.Error:
+                return ErrorDialog(
+                  title: 'エラー',
+                  content: '予期せぬエラーが発生しました。',
+                  buttonColor: CustomColors.primaryColor,
+                );
+              case DialogType.Close:
+                return null;
+            }
+          }).then((value) {
+        if (value == null) {
+          viewModel.cancel();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModel<BluetoothViewModel>(
       model: viewModel,
-      child: new ScopedModelDescendant<BluetoothViewModel>(
+      child: ScopedModelDescendant<BluetoothViewModel>(
           builder: (context, child, model) => GestureDetector(
                 onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
                 child: Scaffold(
@@ -61,4 +115,19 @@ class BluetoothPage extends StatelessWidget {
           ],
         ),
       );
+
+  Widget _selectDialog(BluetoothViewModel model) => SimpleDialog(
+      title: Text('接続するデバイスを選択してください。'),
+      children: model.deviceList
+          .map((device) => SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, device.id);
+                  model.selectDevice(device);
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text('${device.name} (${device.id})'),
+                ),
+              ))
+          .toList());
 }
