@@ -4,13 +4,10 @@ class NigirukunCountSensorData {
   int count;
   DateTime time;
 
-  NigirukunSensorData(int count, DateTime time){
-    this.count = count;
-    this.time = time;
-  }
+  NigirukunCountSensorData(this.count, this.time);
 
   NigirukunCountSensorData.count(int count){
-    this.count = count;
+    this.count = count ?? 0;
     this.time = time ?? DateTime.now();
   }
 }
