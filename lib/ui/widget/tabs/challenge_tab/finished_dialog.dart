@@ -28,7 +28,7 @@ class FinishedDialog extends StatelessWidget {
                   ),
                   onPressed: () {
                     model.saveChallenge();
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop('saved');
                   },
                 ),
               ],

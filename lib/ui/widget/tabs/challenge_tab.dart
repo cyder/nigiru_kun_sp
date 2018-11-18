@@ -48,12 +48,15 @@ class _ChallengeTabState extends State<ChallengeTab> {
                   title: 'エラー',
                   content: '予期せぬエラーが発生しました。',
                   buttonColor: CustomColors.secondaryColor,
-                  callback: viewModel.cancelChallenge,
                 );
               case DialogType.Close:
                 return null;
             }
-          });
+          }).then((value) {
+        if (value == null) {
+          viewModel.cancelChallenge();
+        }
+      });
     });
   }
 
