@@ -98,23 +98,60 @@ class _BluetoothPageState extends State<BluetoothPage> {
               ),
             ),
             Expanded(child: Text(model.message)),
-            RaisedButton(
-              onPressed: model.handleButton,
-              color: CustomColors.primaryColor,
-              child: FractionallySizedBox(
-                widthFactor: 1,
-                child: Container(
-                    alignment: Alignment.center,
-                    margin: EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      model.buttonLabel,
-                      style: TextStyle(fontSize: 16.0),
-                    )),
-              ),
-            ),
+            _button(model),
           ],
         ),
       );
+
+  Widget _button(BluetoothViewModel model) {
+    switch(model.currentState) {
+      case BluetoothState.Connected:
+        return RaisedButton(
+          onPressed: model.disconnect,
+          color: CustomColors.secondaryColor,
+          child: FractionallySizedBox(
+            widthFactor: 1,
+            child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  '切断する',
+                  style: TextStyle(fontSize: 16.0),
+                )),
+          ),
+        );
+      case BluetoothState.Searching:
+      case BluetoothState.Error:
+        return FlatButton(
+          onPressed: model.cancel,
+          child: FractionallySizedBox(
+            widthFactor: 1,
+            child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  'キャンセル',
+                  style: TextStyle(fontSize: 16.0),
+                )),
+          ),
+        );
+      case BluetoothState.Disconnected:
+        return RaisedButton(
+          onPressed: model.search,
+          color: CustomColors.primaryColor,
+          child: FractionallySizedBox(
+            widthFactor: 1,
+            child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(vertical: 16),
+                child: Text(
+                  '接続する',
+                  style: TextStyle(fontSize: 16.0),
+                )),
+          ),
+        );
+    }
+  }
 
   Widget _selectDialog(BluetoothViewModel model) => SimpleDialog(
       title: Text('接続するデバイスを選択してください。'),

@@ -33,15 +33,17 @@ class BluetoothViewModel extends Model {
     Device('にぎるくん', '2345678901'),
   ];
 
+  Device _currentDevice;
+
   String get message {
     switch (currentState) {
       case BluetoothState.Connected:
-        return '接続されました。';
+        return '接続中：${currentDevice.name} (${currentDevice.id})';
       case BluetoothState.Disconnected:
       case BluetoothState.Error:
         return '接続されていません。';
       case BluetoothState.Searching:
-        return '検索中';
+        return '検索中…';
     }
     return null;
   }
@@ -74,6 +76,8 @@ class BluetoothViewModel extends Model {
 
   PublishSubject<DialogType> get currentDialog => _currentDialog;
 
+  Device get currentDevice => _currentDevice;
+
   void search() {
     _currentDialog.add(DialogType.Select); //TODO: 本来はサーチが終わったタイミングで出す。
     _currentState = BluetoothState.Searching;
@@ -82,6 +86,7 @@ class BluetoothViewModel extends Model {
 
   void disconnect() {
     _currentState = BluetoothState.Disconnected;
+    _currentDevice = null;
     notifyListeners();
   }
 
@@ -92,6 +97,7 @@ class BluetoothViewModel extends Model {
 
   void selectDevice(Device device) {
     _currentState = BluetoothState.Connected;
+    _currentDevice = device;
     notifyListeners();
   }
 
