@@ -12,9 +12,10 @@ class Peripheral {
 
 class BluetoothUseCase {
   final BluetoothRepository repository = BluetoothRepositoryImpl();
-  List<NigirukunPeripheral> _nigirukunList;
+  List<NigirukunPeripheral> _nigirukunList = [];
 
   Observable<Peripheral> scan() {
+    _nigirukunList = [];
     Observable<NigirukunPeripheral> observable = repository.scan();
     observable.listen((data) => _nigirukunList.add(data));
     return observable.map((nigirukun) => Peripheral('にぎるくん', nigirukun.uuid));
@@ -31,6 +32,8 @@ class BluetoothUseCase {
 
   Peripheral get connectedPeripheral {
     NigirukunPeripheral nigirikun = repository.connectedNigirukunPeripheral;
-    return Peripheral('にぎるくん', nigirikun.uuid);
+    return nigirikun == null ? null : Peripheral('にぎるくん', nigirikun.uuid);
   }
+
+  bool get isConnected => repository.connectedNigirukunPeripheral != null;
 }
