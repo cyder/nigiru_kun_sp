@@ -49,6 +49,8 @@ create table $tableCount (
     await db.insert(tableCount, count.toMap());
   }
 
+
+  // TODO fix me
   Future<Count> getCount(DateTime from, DateTime to) async {
     String qFrom = from?.toString() ?? "0000-01-01 00:00:00.000000";
     String qTo = to?.toString() ?? DateTime.now().toString();

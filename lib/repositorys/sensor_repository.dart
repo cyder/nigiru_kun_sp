@@ -41,7 +41,6 @@ class SensorRepositoryImpl implements SensorRepository {
 
   CentralManager manager = CentralManager();
 
-
   @override
   void getCount(DateTime from, DateTime to) {
     dbProvider.getCount(null,null).then((item) {
@@ -49,6 +48,7 @@ class SensorRepositoryImpl implements SensorRepository {
     });
   }
 
+  //TODO fix me
   @override
   Observable<List<NigirukunCountSensorData>> get observeCount => _insertedStream.stream;
 
