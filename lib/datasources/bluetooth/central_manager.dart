@@ -6,8 +6,18 @@ import 'package:flutter_blue/flutter_blue.dart';
 
 import 'nigirukun_peripheral.dart';
 import 'nigirukun_profile.dart';
+import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart';
 
 class CentralManager {
+
+  /// Singleton
+  static final CentralManager _singleton = CentralManager._internal();
+  CentralManager._internal();
+
+  factory CentralManager() {
+    return _singleton;
+  }
+
   /// private variables
   final FlutterBlue _flutterBlue = FlutterBlue.instance;
   NigirukunPeripheral _peripheral;
@@ -15,7 +25,7 @@ class CentralManager {
   StreamSubscription<BluetoothDeviceState> _deviceConnection;
   PublishSubject<ScanResult> _scanSubject = PublishSubject<ScanResult>();
   PublishSubject<BluetoothDeviceState> _deviceStateSubject = PublishSubject<BluetoothDeviceState>();
-
+  PublishSubject<NigirukunCountSensorData> _countStream = PublishSubject<NigirukunCountSensorData>();
 
   /// connected device. if it's not connected, device will return null
   NigirukunPeripheral get peripheral => _peripheral;
@@ -34,6 +44,8 @@ class CentralManager {
   /// connected bluetooth device state
   /// rx stream BluetoothDeviceState can subscribe when changed connection state
   Observable<BluetoothDeviceState> get deviceState => _deviceStateSubject.stream;
+
+  Observable<NigirukunCountSensorData> get countStream => _countStream.stream;
 
   /// scan devices which has unique NIGIRUKUN service uuid
   /// - parameter timeout: [default 10 seconds] duration of scanning
@@ -61,7 +73,7 @@ class CentralManager {
   /// - parameter device: try to connect device instance
   void connect(NigirukunPeripheral peripheral) {
     _peripheral = peripheral;
-
+    _peripheral.countStream.listen((s) => _countStream.add(s));
     // Connect to device
     _deviceConnection = _flutterBlue.connect(peripheral.rawPeripheral).listen(null, onDone: disconnect);
 
