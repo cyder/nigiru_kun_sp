@@ -11,7 +11,7 @@ class Count {
   int weight;
   String time;
 
-  Count(this.id, this.weight, this.time);
+  Count({this.id, this.weight, this.time});
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
@@ -22,11 +22,12 @@ class Count {
     return map;
   }
 
-  Count.fromMap(Map<String, dynamic> map) {
-    id = map[countId];
-    weight = map[countWeight];
-    time = map[countTime];
-  }
+  Count.fromMap(Map<String, dynamic> map): this(
+    id: map[countId],
+    weight: map[countWeight],
+    time: map[countTime],
+  );
+
 }
 
 class CountProvider {
@@ -38,7 +39,7 @@ class CountProvider {
       await db.execute('''
 create table $tableCount (
   $countId integer primary key autoincrement,
-  $countWeight text not null,
+  $countWeight integer not null,
   $countTime text not null)
 ''');
     });
@@ -48,15 +49,14 @@ create table $tableCount (
     await db.insert(tableCount, count.toMap());
   }
 
-  Future<List<Count>> getCount(DateTime from, DateTime to) async {
+  Future<Count> getCount(DateTime from, DateTime to) async {
     String qFrom = from?.toString() ?? "0000-01-01 00:00:00.000000";
     String qTo = to?.toString() ?? DateTime.now().toString();
     print("run query ================== >");
-    List<Map> maps = await db.rawQuery("SELECT * FROM counts");// WHERE ? BETWEEN ? AND ?",
-        //[tableCount, countTime, qFrom, qTo]);
+    List<Map> maps = await db.rawQuery("SELECT * FROM ?",[tableCount]);
     print(maps);
     print("end query ================== >${maps?.length ?? 0}");
-    return maps.map((item) => Count.fromMap(item));
+    return Count.fromMap(maps.first);
   }
 
   Future close() async => db.close();

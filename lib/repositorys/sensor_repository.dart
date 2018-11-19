@@ -9,7 +9,9 @@ import 'dart:async';
 import 'package:nigiru_kun/datasources/databases/model/counts.dart';
 
 abstract class SensorRepository {
-  Observable<NigirukunCountSensorData> get observeCount;
+  void getCount(DateTime from, DateTime to);
+  Observable<List<NigirukunCountSensorData>> get observeCount;
+  Observable<NigirukunCountSensorData> get observeLastInserted;
 }
 
 class SensorRepositoryImpl implements SensorRepository {
@@ -17,11 +19,19 @@ class SensorRepositoryImpl implements SensorRepository {
   static final SensorRepositoryImpl _singleton = SensorRepositoryImpl._internal();
   String path;
   CountProvider dbProvider = CountProvider();
-
+  PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
+  PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
   SensorRepositoryImpl._internal() {
     getDatabasesPath().then((value) {
       path = value + 'nigirukun.db';
       dbProvider.open(path);
+    });
+
+    manager.countStream.listen((s) {
+      for (int i = 0; i < s.count; ++i) {
+        dbProvider.insert(Count(id: null,weight: 10,time: s.time.toString()));
+        _latestNigirukun.add(NigirukunCountSensorData(1, s.time));
+      }
     });
   }
 
@@ -31,18 +41,17 @@ class SensorRepositoryImpl implements SensorRepository {
 
   CentralManager manager = CentralManager();
 
+
   @override
-  Observable<NigirukunCountSensorData> get observeCount {
-    return manager.countStream;//.map((data) {
-      //print('in repo ========> ${data.count}========================');
-      //dbProvider.insert(Count(null, 10, data.time.toString()));
-      //print('in repo ========> ${data.count}============inserted============');
-      //var len = dbProvider.getCount(null, null).then((item) => item.length);
-      //len.then((s) {
-      //  print("in repository ======= >${s}");
-      //  return s;
-      //});
-      //return NigirukunCountSensorData(0, data.time);
-    //});
+  void getCount(DateTime from, DateTime to) {
+    dbProvider.getCount(null,null).then((item) {
+      _insertedStream.add([NigirukunCountSensorData(1, DateTime.parse(item.time))].toList());
+    });
   }
+
+  @override
+  Observable<List<NigirukunCountSensorData>> get observeCount => _insertedStream.stream;
+
+  @override
+  Observable<NigirukunCountSensorData> get observeLastInserted => _latestNigirukun.stream;
 }
