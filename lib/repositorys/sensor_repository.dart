@@ -43,13 +43,15 @@ class SensorRepositoryImpl implements SensorRepository {
 
   @override
   void getCount(DateTime from, DateTime to) {
-    dbProvider.getCount(null,null).then((item) {
-      _insertedStream.add([NigirukunCountSensorData(1, DateTime.parse(item.time))].toList());
+    Observable.fromFuture(dbProvider.getCount(null, null))
+      .listen((item) {
+        List<NigirukunCountSensorData> data = item.map((e) {
+          return NigirukunCountSensorData(1, DateTime.parse(e.time));
+        }).toList();
+      _insertedStream.add(data);
     });
   }
 
-  //TODO fix me
-  // databaseのgetCountがバグっているため．こっちも付随してバグる
   @override
   Observable<List<NigirukunCountSensorData>> get observeCount => _insertedStream.stream;
 
