@@ -26,7 +26,9 @@ class ErrorDialog extends StatelessWidget {
             style: TextStyle(color: this.buttonColor),
           ),
           onPressed: () {
-            callback();
+            if(callback != null) {
+              callback();
+            }
             Navigator.of(context).pop();
           },
         ),
