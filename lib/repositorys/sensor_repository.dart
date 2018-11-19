@@ -49,6 +49,7 @@ class SensorRepositoryImpl implements SensorRepository {
   }
 
   //TODO fix me
+  // databaseのgetCountがバグっているため．こっちも付随してバグる
   @override
   Observable<List<NigirukunCountSensorData>> get observeCount => _insertedStream.stream;
 

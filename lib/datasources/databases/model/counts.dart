@@ -56,6 +56,8 @@ create table $tableCount (
     String qTo = to?.toString() ?? DateTime.now().toString();
     print("run query ================== >");
     List<Map> maps = await db.rawQuery("SELECT * FROM ?",[tableCount]);
+    // between指定ができない．
+    // 結果をListとして撮れない
     print(maps);
     print("end query ================== >${maps?.length ?? 0}");
     return Count.fromMap(maps.first);
