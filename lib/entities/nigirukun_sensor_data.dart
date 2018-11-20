@@ -1,5 +1,10 @@
 import 'dart:core';
 
+enum Hand {
+  Right,
+  Left,
+}
+
 class NigirukunCountSensorData {
   int count;
   DateTime time;
@@ -13,11 +18,13 @@ class NigirukunCountSensorData {
 }
 
 class NigirukunForceSensorData {
-  List<int> force;
+  int force;
   DateTime time;
+  Hand hand;
 
-  NigirukunForceSensorData(List<int> force, DateTime time){
-    this.force = force;
+  NigirukunForceSensorData(int force, DateTime time, Hand hand){
+    this.force = force ?? 0;
     this.time = time ?? DateTime.now();
+    this.hand = hand ?? Hand.Right;
   }
 }
