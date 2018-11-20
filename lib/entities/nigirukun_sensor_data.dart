@@ -16,7 +16,7 @@ class NigirukunForceensorData {
   List<int> force;
   DateTime time;
 
-  NigirukunSensorData(List<int> force, DateTime time){
+  NigirukunForceensorData(List<int> force, DateTime time){
     this.force = force;
     this.time = time ?? DateTime.now();
   }

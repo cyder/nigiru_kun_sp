@@ -50,17 +50,19 @@ create table $tableCount (
   }
 
 
-  // TODO fix me
-  Future<Count> getCount(DateTime from, DateTime to) async {
+  Future<List<Count>> getCount(DateTime from, DateTime to) async {
     String qFrom = from?.toString() ?? "0000-01-01 00:00:00.000000";
     String qTo = to?.toString() ?? DateTime.now().toString();
-    print("run query ================== >");
-    List<Map> maps = await db.rawQuery("SELECT * FROM ?",[tableCount]);
-    // between指定ができない．
-    // 結果をListとして撮れない
-    print(maps);
-    print("end query ================== >${maps?.length ?? 0}");
-    return Count.fromMap(maps.first);
+    List<Map> maps = await db.query(tableCount,
+      columns: [countId, countWeight, countTime],
+      where: '$countTime >= ? AND $countTime <= ?',
+      whereArgs: [qFrom, qTo]
+    );
+    List<Count> result = List<Count>();
+    maps.forEach((map) {
+      result.add(Count.fromMap(map));
+    });
+    return result;
   }
 
   Future close() async => db.close();
