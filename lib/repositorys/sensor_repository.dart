@@ -37,10 +37,10 @@ class SensorRepositoryImpl implements SensorRepository {
       PublishSubject<NigirukunCountSensorData>();
 
   SensorRepositoryImpl._internal() {
+    forceProvider.initDb();
     getDatabasesPath().then((value) {
       path = value + 'nigirukun.db';
       countProvider.open(path);
-      forceProvider.open(path);
     });
 
     manager.countStream.listen((s) {
@@ -88,20 +88,24 @@ class SensorRepositoryImpl implements SensorRepository {
       hand: hand,
       from: from,
       to: to,
-    )).map((item) => item.map((force) => NigirukunForceSensorData(
-          force.value,
-          DateTime.parse(force.time),
-          force.hand == Hand.Right.toString() ? Hand.Right : Hand.Left,
-        )));
+    )).map((item) => item
+        .map((force) => NigirukunForceSensorData(
+              force.value,
+              DateTime.parse(force.time),
+              force.hand == Hand.Right.toString() ? Hand.Right : Hand.Left,
+            ))
+        .toList());
   }
 
   @override
   Observable<NigirukunForceSensorData> observeBestForce({Hand hand}) {
     return Observable.fromFuture(forceProvider.getMaxForce(hand))
-        .map((force) => NigirukunForceSensorData(
-              force.value,
-              DateTime.parse(force.time),
-              force.hand == Hand.Right.toString() ? Hand.Right : Hand.Left,
-            ));
+        .map((force) => force != null
+            ? NigirukunForceSensorData(
+                force.value,
+                DateTime.parse(force.time),
+                force.hand == Hand.Right.toString() ? Hand.Right : Hand.Left,
+              )
+            : null);
   }
 }

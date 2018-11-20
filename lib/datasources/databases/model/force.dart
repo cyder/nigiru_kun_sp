@@ -3,7 +3,7 @@ import 'dart:core';
 
 import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart';
 
-const String tableForce = 'force';
+const String tableForce = "force";
 const String forceId = "id";
 const String forceValue = "value";
 const String forceTime = "time";
@@ -37,11 +37,25 @@ class Force {
 }
 
 class ForceProvider {
-  Database db;
+  Database _db;
 
-  Future open(String path) async {
-    db = await openDatabase(path, version: 1,
+  Future<Database> get db async {
+    if (_db != null) {
+      return _db;
+    }
+    _db = await initDb();
+    return _db;
+  }
+
+  Future<Database> initDb() async {
+    if(_db != null) {
+      return _db;
+    }
+    String path = await getDatabasesPath() + 'nigirukun.db';
+    print(path);
+    _db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
+      print('create');
       await db.execute('''
 create table $tableForce (
   $forceId integer primary key autoincrement,
@@ -50,10 +64,11 @@ create table $tableForce (
   $forceHand text not null)
 ''');
     });
+    return _db;
   }
 
   Future<void> insert(Force force) async {
-    await db.insert(tableForce, force.toMap());
+    await (await db).insert(tableForce, force.toMap());
   }
 
   Future<List<Force>> getForce({
@@ -69,19 +84,19 @@ create table $tableForce (
         : '$forceTime >= ? AND $forceTime <= ?';
     List<String> qWhereArgs = hand != null ? [qFrom, qTo, qhand] : [qFrom, qTo];
 
-    List<Map> maps = await db.query(tableForce,
+    List<Map> maps = await (await db).query(tableForce,
         columns: [forceId, forceValue, forceHand, forceTime],
         where: qWhere,
         whereArgs: qWhereArgs);
 
-    List<Force> result = maps.map((map) => Force.fromMap(map));
+    List<Force> result = maps.map((map) => Force.fromMap(map)).toList();
 
     return result;
   }
 
   Future<Force> getMaxForce(Hand hand) async {
     String qhand = hand?.toString() ?? Hand.Right;
-    List<Map> maps = await db.query(tableForce,
+    List<Map> maps = await (await db).query(tableForce,
         columns: [forceId, forceValue, forceHand, forceTime],
         where: '$forceHand == ?',
         whereArgs: [qhand],
@@ -92,5 +107,5 @@ create table $tableForce (
     return maps.length == 1 ? Force.fromMap(maps.first) : null;
   }
 
-  Future close() async => db.close();
+  Future close() async => (await db).close();
 }
