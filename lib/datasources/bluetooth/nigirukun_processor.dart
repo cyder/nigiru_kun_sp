@@ -19,9 +19,6 @@ class NigirukunDataProcessor {
   }
 
   List<int> fromThresh(int t) {
-    print(t>>8);
-    print(t & ((1 << 8) - 1));
-
     return [t & ((1 << 8) - 1), t>>8];
   }
 }
