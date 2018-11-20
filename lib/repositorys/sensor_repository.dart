@@ -4,7 +4,6 @@ import 'package:nigiru_kun/datasources/bluetooth/central_manager.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:core';
-import 'dart:async';
 
 import 'package:nigiru_kun/datasources/databases/model/counts.dart';
 
@@ -28,10 +27,7 @@ class SensorRepositoryImpl implements SensorRepository {
       PublishSubject<NigirukunCountSensorData>();
 
   SensorRepositoryImpl._internal() {
-    getDatabasesPath().then((value) {
-      path = value + 'nigirukun.db';
-      dbProvider.open(path);
-    });
+    dbProvider.initDb();
 
     manager.countStream.listen((s) {
       for (int i = 0; i < s.count; ++i) {
