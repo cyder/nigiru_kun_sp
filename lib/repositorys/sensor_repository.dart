@@ -53,7 +53,7 @@ class SensorRepositoryImpl implements SensorRepository {
     return Observable.fromFuture(dbProvider.getCount(from, to))
         .map((item) => item.map((e) {
               return NigirukunCountSensorData(1, DateTime.parse(e.time));
-            }));
+            }).toList());
   }
 
   @override
@@ -61,6 +61,10 @@ class SensorRepositoryImpl implements SensorRepository {
       DateTime from, DateTime to) {
     final PublishSubject<List<NigirukunCountSensorData>> _insertedStream =
         PublishSubject<List<NigirukunCountSensorData>>();
+
+    getCount(from, to).listen((data) {
+      _insertedStream.add(data);
+    });
 
     _latestNigirukun.listen((_) {
       getCount(from, to).listen((data) {
