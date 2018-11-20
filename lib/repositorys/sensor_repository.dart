@@ -10,6 +10,8 @@ import 'package:nigiru_kun/datasources/databases/model/counts.dart';
 
 abstract class SensorRepository {
   void getCount(DateTime from, DateTime to);
+  void setWeight(int value);
+  int get weight;
   Observable<List<NigirukunCountSensorData>> get observeCount;
   Observable<NigirukunCountSensorData> get observeLastInserted;
   Observable<NigirukunForceSensorData> get observeForceData;
@@ -20,6 +22,8 @@ class SensorRepositoryImpl implements SensorRepository {
   static final SensorRepositoryImpl _singleton = SensorRepositoryImpl._internal();
   String path;
   CountProvider dbProvider = CountProvider();
+
+  int latestWeight = -1;
   PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
   PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
   SensorRepositoryImpl._internal() {
@@ -29,10 +33,14 @@ class SensorRepositoryImpl implements SensorRepository {
     });
 
     manager.countStream.listen((s) {
-      for (int i = 0; i < s.count; ++i) {
-        dbProvider.insert(Count(id: null,weight: 10,time: s.time.toString()));
-        _latestNigirukun.add(NigirukunCountSensorData(1, s.time));
-      }
+      Observable.fromFuture(manager.peripheral.readThresh())
+        .listen((weight) {
+          latestWeight = weight;
+          for (int i = 0; i < s.count; ++i) {
+            dbProvider.insert(Count(id: null,weight: weight,time: s.time.toString()));
+            _latestNigirukun.add(NigirukunCountSensorData(1, s.time));
+          }
+      });
     });
   }
 
@@ -61,4 +69,13 @@ class SensorRepositoryImpl implements SensorRepository {
 
   @override
   Observable<NigirukunForceSensorData> get observeForceData => manager.forceStream;
+
+  @override
+  int get weight => latestWeight;
+
+  @override
+  void setWeight(int value) {
+    if (manager?.peripheral == null) return;
+    manager.peripheral.writeThresh(value);
+  }
 }
