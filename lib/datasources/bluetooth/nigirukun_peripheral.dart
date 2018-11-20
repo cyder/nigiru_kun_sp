@@ -23,7 +23,9 @@ class NigirukunPeripheral {
 
   /// stream 4-finger force data
   /// rx stream data
-  Observable<List<int>> get forceStream => _forceStream.stream;
+  Observable<NigirukunForceSensorData> get forceStream =>
+      _forceStream.stream
+          .map((data) => NigirukunForceSensorData.force(data));
 
   /// stream count data
   /// rx stream data

@@ -12,6 +12,7 @@ abstract class SensorRepository {
   void getCount(DateTime from, DateTime to);
   Observable<List<NigirukunCountSensorData>> get observeCount;
   Observable<NigirukunCountSensorData> get observeLastInserted;
+  Observable<NigirukunForceSensorData> get observeForceData;
 }
 
 class SensorRepositoryImpl implements SensorRepository {
@@ -57,4 +58,7 @@ class SensorRepositoryImpl implements SensorRepository {
 
   @override
   Observable<NigirukunCountSensorData> get observeLastInserted => _latestNigirukun.stream;
+
+  @override
+  Observable<NigirukunForceSensorData> get observeForceData => manager.forceStream;
 }
