@@ -12,11 +12,11 @@ class NigirukunCountSensorData {
   }
 }
 
-class NigirukunForceensorData {
+class NigirukunForceSensorData {
   List<int> force;
   DateTime time;
 
-  NigirukunForceensorData(List<int> force, DateTime time){
+  NigirukunForceSensorData(List<int> force, DateTime time){
     this.force = force;
     this.time = time ?? DateTime.now();
   }
