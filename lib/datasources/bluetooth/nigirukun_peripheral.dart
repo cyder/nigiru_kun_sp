@@ -10,6 +10,7 @@ import 'package:nigiru_kun/entities/nigirukun_sensor_data.dart';
 class NigirukunPeripheral {
   /// private variables
   BluetoothDevice _rawPeripheral;
+  BluetoothCharacteristic _threshCharacteristic;
   StreamSubscription<BluetoothDeviceState> _deviceStateSubscription;
   PublishSubject<BluetoothService> _serviceStream = PublishSubject<BluetoothService>();
   PublishSubject<List<int>> _forceStream = PublishSubject<List<int>>();
@@ -58,6 +59,14 @@ class NigirukunPeripheral {
       if(s == BluetoothDeviceState.connected){
         _rawPeripheral.discoverServices().then((s){
           s.forEach((item) => _serviceStream.add(item));
+          //find thresh characteristic
+          s.forEach((s) {
+            s.characteristics.forEach((characteristic) {
+              if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.THRESH_CHARACTERISTIC){
+                _threshCharacteristic = characteristic;
+              }
+            });
+          });
         });
       }
     });
@@ -67,6 +76,26 @@ class NigirukunPeripheral {
   /// disconnect peripheral
   void disconnect() {
     _deviceStateSubscription = null;
+  }
+
+  /// read Threshold data
+  Future<int> readThresh() async {
+   int thresh = -1;
+   if (_threshCharacteristic == null) {
+     return thresh;
+   }
+   Future<List<int>> raw = _readValue(_threshCharacteristic);
+   await raw.then((value) {thresh = NigirukunDataProcessor().toThresh(value);print("thresh ======== > ${thresh.toString()}");});
+   return thresh;
+  }
+
+
+  /// write Threshold data
+  Future<void> writeThresh(int value) async {
+    if(_threshCharacteristic == null) {
+      return null;
+    }
+    await _writeValue(_threshCharacteristic, NigirukunDataProcessor().fromThresh(value));
   }
 
 
@@ -81,7 +110,7 @@ class NigirukunPeripheral {
           }
           if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC) {
             // reset
-            writeValue(characteristic, [0, 0, 0, 0]);
+            _writeValue(characteristic, [0, 0, 0, 0]);
             await _rawPeripheral.setNotifyValue(characteristic, true);
           }
         });
@@ -96,19 +125,19 @@ class NigirukunPeripheral {
 
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value){
+        _rawPeripheral.onValueChanged(characteristic).listen((value) {
           _forceStream.add(NigirukunDataProcessor().toForce(value));
           print('force -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
         });
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value){
+        _rawPeripheral.onValueChanged(characteristic).listen((value) async {
           _countStream.add(NigirukunDataProcessor().toCount(value));
           print('count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
           // reset
-          writeValue(characteristic, [0, 0, 0, 0]);
+          await _writeValue(characteristic, [0, 0, 0, 0]);
         });
 
         break;
@@ -117,7 +146,11 @@ class NigirukunPeripheral {
     }
   }
 
-  Future<void> writeValue(BluetoothCharacteristic characteristic, List<int> value) async {
+  Future<void> _writeValue(BluetoothCharacteristic characteristic, List<int> value) async {
     await _rawPeripheral.writeCharacteristic(characteristic, value);
+  }
+
+  Future<List<int>> _readValue(BluetoothCharacteristic characteristic) async {
+    return await _rawPeripheral.readCharacteristic(characteristic);
   }
 }
