@@ -1,8 +1,14 @@
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:rxdart/rxdart.dart';
+
+import 'package:nigiru_kun/usecases/count_use_case.dart';
 
 class HomeTabViewModel extends Model {
-  int _currentGripNum = 75;
+  CountUseCase _countUseCase = CountUseCase();
+  Observable<int> countSubject;
+
+  int _currentGripNum = 0;
   int _goalGripNum = 100;
   int _weight = 20;
 
@@ -19,6 +25,18 @@ class HomeTabViewModel extends Model {
   int get weight => _weight;
 
   double get achievementRate => _currentGripNum / _goalGripNum;
+
+  void init() {
+    countSubject = _countUseCase.observeTodayCount;
+    countSubject.listen((sum) {
+      print(sum);
+      _currentGripNum = sum;
+      notifyListeners();
+    });
+  }
+
+  void dispose() {
+  }
 
   void setWeight(String value) {
     if (value == '') {
