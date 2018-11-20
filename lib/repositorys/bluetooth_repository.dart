@@ -7,6 +7,8 @@ abstract class BluetoothRepository {
   Observable<NigirukunPeripheral> scan();
   void connect(NigirukunPeripheral peripheral);
   void disconnect();
+
+  NigirukunPeripheral get connectedNigirukunPeripheral;
 }
 
 class BluetoothRepositoryImpl extends BluetoothRepository {
@@ -37,4 +39,6 @@ class BluetoothRepositoryImpl extends BluetoothRepository {
     return manager.scannedDevice;
   }
 
+  @override
+  NigirukunPeripheral get connectedNigirukunPeripheral => manager.peripheral;
 }

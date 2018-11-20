@@ -1,6 +1,8 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:nigiru_kun/usecases/bluetooth_use_case.dart';
+
 enum BluetoothState {
   Connected,
   Disconnected,
@@ -14,31 +16,31 @@ enum DialogType {
   Close,
 }
 
-// TODO: 仮実装
-class Device {
-  final String name;
-  final String id;
-  Device(this.name, this.id);
-}
-
 class BluetoothViewModel extends Model {
+  BluetoothUseCase useCase = BluetoothUseCase();
   BluetoothState _currentState = BluetoothState.Disconnected;
+  List<Peripheral> deviceList = [];
 
   BluetoothState get currentState => _currentState;
 
   PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
 
-  final List<Device> deviceList  = [
-    Device('にぎるくん', '1234567890'),
-    Device('にぎるくん', '2345678901'),
-  ];
-
-  Device _currentDevice;
+  BluetoothViewModel() {
+    if(useCase.isConnected) {
+      _currentState = BluetoothState.Connected;
+    }
+  }
 
   String get message {
     switch (currentState) {
       case BluetoothState.Connected:
-        return '接続中：${currentDevice.name} (${currentDevice.id})';
+        Peripheral connected = useCase.connectedPeripheral;
+        if(connected != null) {
+          return '接続中：${connected.name} (${connected.id})';
+        }
+        _currentState = BluetoothState.Error;
+        _currentDialog.add(DialogType.Error);
+        return null;
       case BluetoothState.Disconnected:
       case BluetoothState.Error:
         return '接続されていません。';
@@ -76,28 +78,36 @@ class BluetoothViewModel extends Model {
 
   PublishSubject<DialogType> get currentDialog => _currentDialog;
 
-  Device get currentDevice => _currentDevice;
-
   void search() {
-    _currentDialog.add(DialogType.Select); //TODO: 本来はサーチが終わったタイミングで出す。
+    deviceList = [];
+    useCase.scan().listen((data) {
+      if (deviceList.isEmpty) {
+        _currentDialog.add(DialogType.Select);
+      }
+      deviceList.add(data);
+      notifyListeners();
+    });
+
     _currentState = BluetoothState.Searching;
     notifyListeners();
   }
 
   void disconnect() {
     _currentState = BluetoothState.Disconnected;
-    _currentDevice = null;
+    useCase.disconnect();
     notifyListeners();
   }
 
   void cancel() {
     _currentState = BluetoothState.Disconnected;
+    deviceList.clear();
     notifyListeners();
   }
 
-  void selectDevice(Device device) {
+  void selectDevice(Peripheral device) {
+    useCase.connect(device.id);
     _currentState = BluetoothState.Connected;
-    _currentDevice = device;
+    deviceList.clear();
     notifyListeners();
   }
 
