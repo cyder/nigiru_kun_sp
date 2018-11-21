@@ -27,7 +27,7 @@ class SensorRepositoryImpl implements SensorRepository {
   String path;
   CountProvider dbProvider = CountProvider();
 
-  int _latestWeight = -1;
+  int _latestWeight;
   PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
   PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
   SensorRepositoryImpl._internal() {
