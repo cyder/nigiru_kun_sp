@@ -27,16 +27,15 @@ class SettingRepositoryImpl implements SettingRepository {
 
   @override
   Observable<int> getGoal() {
-    //最も新しいレコードをとってくる
     Future<Goal> g = dbProvider.getLatestRecord();
-
-    //レコードが存在しないなら，作る
-    if (g == null) {
-      dbProvider.insert(Goal.fromDatetime(DateTime.now(), defaultGoal));
-      return Observable.just(defaultGoal);
-    }
-    g.then((goal) => dbProvider.update(Goal.fromDatetime(DateTime.now(), goal.goal)));
-    return Observable.fromFuture(g).map((g) => g.goal);
+    return Observable.fromFuture(g).map((g) {
+      if(g == null) {
+        dbProvider.insert(Goal.fromDatetime(DateTime.now(), defaultGoal));
+        return defaultGoal;
+      }
+      dbProvider.update(Goal.fromDatetime(DateTime.now(), g.goal));
+      return g.goal;
+    });
   }
 
   @override

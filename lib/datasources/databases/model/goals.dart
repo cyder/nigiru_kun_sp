@@ -1,9 +1,9 @@
+import 'package:nigiru_kun/datasources/databases/database.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:intl/intl.dart';
+import 'package:nigiru_kun/datasources/databases/constants.dart';
 
-final String tableGoal = "goals";
-final String goalDate = "date";
-final String goalGoal = "goal";
+
 
 class Goal {
   String date;
@@ -32,34 +32,14 @@ class Goal {
 }
 
 class GoalProvider {
-  Database _db;
-
-  Future<Database> get db async {
-    if (_db != null) {
-      return _db;
-    }
-    _db = await initDb();
-    return _db;
-  }
+  final NigirukunDatabase _nigirukunDatabase = NigirukunDatabase();
 
   Future<Database> initDb() async {
-    if(_db != null) {
-      return _db;
-    }
-    String path = await getDatabasesPath() + 'nigirukun.db';
-    _db = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-          await db.execute('''
-create table $tableGoal (
-  $goalDate text primary key,
-  $goalGoal integer not null)
-''');
-        });
-    return _db;
+    return _nigirukunDatabase.initDb();
   }
 
   Future<void> insert(Goal goal) async {
-    await (await db).insert(tableGoal, goal.toMap());
+    await (await _nigirukunDatabase.db).insert(tableGoal, goal.toMap());
   }
 
   Future<void> update(Goal goal) async {
@@ -67,7 +47,7 @@ create table $tableGoal (
       insert(goal);
     }
     else {
-      await (await db).update(tableGoal, goal.toMap(),
+      await (await _nigirukunDatabase.db).update(tableGoal, goal.toMap(),
         where: '$goalDate = ?',
         whereArgs: [goal.date]
       );
@@ -75,7 +55,7 @@ create table $tableGoal (
   }
 
   Future<Goal> getGoal(String time) async {
-    List<Map> maps = await (await db).query(tableGoal,
+    List<Map> maps = await (await _nigirukunDatabase.db).query(tableGoal,
       columns: [goalDate, goalGoal],
       where: '$goalDate = ?',
       whereArgs: [time]
@@ -87,7 +67,7 @@ create table $tableGoal (
   }
 
   Future<Goal> getLatestRecord() async {
-    List<Map> maps = await (await db).query(tableGoal,
+    List<Map> maps = await (await _nigirukunDatabase.db).query(tableGoal,
       columns: [goalDate, goalGoal],
       orderBy: goalDate+" DESC",
       limit: 1

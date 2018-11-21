@@ -90,7 +90,7 @@ class ChallengeTabViewModel extends Model {
   void init() {
     _currentDialog = PublishSubject<DialogType>();
     useCase.observeForceWeight.listen((weight) {
-      _currentForce = weight < maxForce ? weight : maxForce;
+      _currentForce = weight < maxForce.toDouble() ? weight : maxForce.toDouble();
       notifyListeners();
     });
     _updateBestForce();
