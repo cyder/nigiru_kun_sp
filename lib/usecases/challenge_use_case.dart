@@ -11,4 +11,18 @@ class ChallengeUseCase {
         .map((weight) => weight < 3.0 ? 0.0 : weight)
         .distinct((a, b) => a == b);
   }
+
+  Observable<double> get observeChallengeResult {
+    double max = 0;
+    return observeForceWeight
+        .map((weight) {
+          if (weight > max) {
+            max = weight;
+          }
+          return weight;
+        })
+        .where((weight) => weight < max / 2)
+        .map((_) => max)
+        .take(1);
+  }
 }

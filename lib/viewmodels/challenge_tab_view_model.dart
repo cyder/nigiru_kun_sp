@@ -29,6 +29,7 @@ class ChallengeTabViewModel extends Model {
   PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
   ChallengeState _currentState = ChallengeState.StandBy;
   double _currentForce = 0;
+  double _resultForce;
 
   Hand get currentHand => _currentHand;
 
@@ -37,6 +38,8 @@ class ChallengeTabViewModel extends Model {
   ChallengeData get leftBest => _leftBest;
 
   int get currentForce => _currentForce.toInt();
+
+  int get resultForce => _resultForce?.toInt() ?? 0;
 
   double get currentForceRatio => _currentForce / maxForce;
 
@@ -63,7 +66,11 @@ class ChallengeTabViewModel extends Model {
 
   void startChallenge() {
     _currentState = ChallengeState.Doing;
-    _currentDialog.add(DialogType.Finished); //TODO: 本来は測定が終わったタイミングで出す。
+    useCase.observeChallengeResult.listen((result) {
+      _resultForce = result;
+      _currentDialog.add(DialogType.Finished);
+      notifyListeners();
+    });
     notifyListeners();
   }
 
