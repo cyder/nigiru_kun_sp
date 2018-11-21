@@ -1,10 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:core';
 
-final String tableCount = "counts";
-final String countId = "id";
-final String countWeight = "weight";
-final String countTime = "time";
+import 'package:nigiru_kun/datasources/databases/constants.dart';
+import 'package:nigiru_kun/datasources/databases/database.dart';
 
 class Count {
   int id;
@@ -31,42 +29,20 @@ class Count {
 }
 
 class CountProvider {
-  Database _db;
-
-  Future<Database> get db async {
-    if (_db != null) {
-      return _db;
-    }
-    _db = await initDb();
-    return _db;
-  }
-
+  final NigirukunDatabase _nigirukunDatabase = NigirukunDatabase();
   Future<Database> initDb() async {
-    if(_db != null) {
-      return _db;
-    }
-    String path = await getDatabasesPath() + 'nigirukun.db';
-    _db = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-      await db.execute('''
-create table $tableCount (
-  $countId integer primary key autoincrement,
-  $countWeight real not null,
-  $countTime text not null)
-''');
-    });
-    return _db;
+    return _nigirukunDatabase.initDb();
   }
 
   Future<void> insert(Count count) async {
-    await (await db).insert(tableCount, count.toMap());
+    await (await _nigirukunDatabase.db).insert(tableCount, count.toMap());
   }
 
 
   Future<List<Count>> getCount(DateTime from, DateTime to) async {
     String qFrom = from?.toString() ?? "0000-01-01 00:00:00.000000";
     String qTo = to?.toString() ?? DateTime.now().toString();
-    List<Map> maps = await (await db).query(tableCount,
+    List<Map> maps = await (await _nigirukunDatabase.db).query(tableCount,
       columns: [countId, countWeight, countTime],
       where: '$countTime >= ? AND $countTime <= ?',
       whereArgs: [qFrom, qTo]
@@ -78,5 +54,5 @@ create table $tableCount (
     return result;
   }
 
-  Future close() async => (await db).close();
+  Future close() async => _nigirukunDatabase.close();
 }

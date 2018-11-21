@@ -2,12 +2,8 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:core';
 
 import 'package:nigiru_kun/entities/hand.dart';
-
-const String tableForce = "force";
-const String forceId = "id";
-const String forceValue = "value";
-const String forceTime = "time";
-const String forceHand = 'hand';
+import 'package:nigiru_kun/datasources/databases/constants.dart';
+import 'package:nigiru_kun/datasources/databases/database.dart';
 
 class Force {
   int id;
@@ -37,38 +33,15 @@ class Force {
 }
 
 class ForceProvider {
-  Database _db;
+  final NigirukunDatabase _nigirukunDatabase = NigirukunDatabase();
 
-  Future<Database> get db async {
-    if (_db != null) {
-      return _db;
-    }
-    _db = await initDb();
-    return _db;
-  }
 
   Future<Database> initDb() async {
-    if(_db != null) {
-      return _db;
-    }
-    String path = await getDatabasesPath() + 'nigirukun.db';
-    print(path);
-    _db = await openDatabase(path, version: 1,
-        onCreate: (Database db, int version) async {
-          print('create');
-          await db.execute('''
-create table $tableForce (
-  $forceId integer primary key autoincrement,
-  $forceValue integer not null,
-  $forceTime text not null,
-  $forceHand text not null)
-''');
-        });
-    return _db;
+    return _nigirukunDatabase.initDb();
   }
 
   Future<void> insert(Force force) async {
-    await (await db).insert(tableForce, force.toMap());
+    await (await _nigirukunDatabase.db).insert(tableForce, force.toMap());
   }
 
   Future<List<Force>> getForce({
@@ -84,7 +57,7 @@ create table $tableForce (
         : '$forceTime >= ? AND $forceTime <= ?';
     List<String> qWhereArgs = hand != null ? [qFrom, qTo, qhand] : [qFrom, qTo];
 
-    List<Map> maps = await (await db).query(tableForce,
+    List<Map> maps = await (await _nigirukunDatabase.db).query(tableForce,
         columns: [forceId, forceValue, forceHand, forceTime],
         where: qWhere,
         whereArgs: qWhereArgs);
@@ -96,7 +69,7 @@ create table $tableForce (
 
   Future<Force> getMaxForce(Hand hand) async {
     String qhand = hand?.toString() ?? Hand.Right;
-    List<Map> maps = await (await db).query(tableForce,
+    List<Map> maps = await (await _nigirukunDatabase.db).query(tableForce,
       columns: [forceId, forceValue, forceHand, forceTime],
       where: '$forceHand == ?',
       whereArgs: [qhand],
@@ -107,5 +80,5 @@ create table $tableForce (
     return maps.length == 1 ? Force.fromMap(maps.first) : null;
   }
 
-  Future close() async => (await db).close();
+  Future close() async => _nigirukunDatabase.close();
 }
