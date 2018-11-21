@@ -44,7 +44,7 @@ class RecordTabViewModel extends Model {
         0,
         ChallengeData(
           Hand.Right,
-          random.nextInt(50).toDouble(),
+          random.nextInt(50),
           DateTime.now().add(Duration(days: -i)),
         ),
       );
@@ -53,7 +53,7 @@ class RecordTabViewModel extends Model {
         0,
         ChallengeData(
           Hand.Left,
-          random.nextInt(50).toDouble(),
+          random.nextInt(50),
           DateTime.now().add(Duration(days: -i)),
         ),
       );
