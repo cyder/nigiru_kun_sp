@@ -84,7 +84,7 @@ class NigirukunPeripheral {
 
   /// read Threshold data
   Future<int> readThresh() async {
-    int thresh = -1;
+    int thresh;
     if (_threshCharacteristic == null) {
       return thresh;
     }

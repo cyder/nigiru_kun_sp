@@ -27,7 +27,6 @@ class CentralManager {
   PublishSubject<BluetoothDeviceState> _deviceStateSubject = PublishSubject<BluetoothDeviceState>();
   PublishSubject<NigirukunCountSensorData> _countStream = PublishSubject<NigirukunCountSensorData>();
   PublishSubject<NigirukunForceSensorData> _forceStream = PublishSubject<NigirukunForceSensorData>();
-  PublishSubject<int> _weightStream = PublishSubject<int>();
 
   /// connected device. if it's not connected, device will return null
   NigirukunPeripheral get peripheral => _peripheral;
@@ -51,7 +50,6 @@ class CentralManager {
 
   Observable<NigirukunForceSensorData> get forceStream => _forceStream.stream;
 
-  Observable<int> get currentWeightStream => _weightStream.stream;
 
   Future<int> get getWeight => peripheral?.readThresh();
 
