@@ -49,7 +49,7 @@ class BestChallenge extends StatelessWidget {
           new Container(
             margin: EdgeInsets.only(bottom: 5.0),
             child: Text(
-              data.hand == Hand.Right ? '右手' : '左手',
+              data?.hand == Hand.Right ? '右手' : '左手',
               style: TextStyle(fontSize: 14.0),
             ),
           ),
@@ -59,11 +59,11 @@ class BestChallenge extends StatelessWidget {
             textBaseline: TextBaseline.alphabetic,
             children: [
               new Text(
-                data.force.toInt().toString(),
+                data?.force?.toInt()?.toString() ?? '--',
                 style: new TextStyle(fontSize: 28.0),
               ),
               new Text(
-                ' kg /${formattedDate(data.date)}',
+                ' kg /${data != null ? formattedDate(data.date) : '--'}',
                 style: new TextStyle(fontSize: 14.0),
               ),
             ],
