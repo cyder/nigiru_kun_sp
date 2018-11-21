@@ -5,12 +5,12 @@ class NigirukunDataProcessor {
     return raw[0] + (raw[1] << 8) + (raw[2] << 16) + (raw[3] << 24);
   }
 
-  List<int> toForce(List<int> raw) {
+  List<double> toForce(List<int> raw) {
     return [
-      raw[0] + (raw[1] << 8),
-      raw[2] + (raw[3] << 8),
-      raw[4] + (raw[5] << 8),
-      raw[6] + (raw[7] << 8)
+      (raw[0] + (raw[1] << 8)) / 10,
+      (raw[2] + (raw[3] << 8)) / 10,
+      (raw[4] + (raw[5] << 8)) / 10,
+      (raw[6] + (raw[7] << 8)) / 10,
     ].toList();
   }
 

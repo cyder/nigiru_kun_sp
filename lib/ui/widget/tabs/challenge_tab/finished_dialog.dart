@@ -8,7 +8,7 @@ class FinishedDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ChallengeTabViewModel>(
         builder: (context, child, model) => AlertDialog(
-              title: new Text('${model.currentHandName}： ${model.currentForce} kg'),
+              title: new Text('${model.currentHandName}： ${model.resultForce} kg'),
               content: new Text('データを登録しますか？'),
               actions: <Widget>[
                 new FlatButton(

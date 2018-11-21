@@ -1,6 +1,7 @@
 import 'package:scoped_model/scoped_model.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:nigiru_kun/usecases/challenge_use_case.dart';
 import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
 
@@ -18,7 +19,8 @@ enum DialogType {
 }
 
 class ChallengeTabViewModel extends Model {
-  final int maxForce = 150;
+  final int maxForce = 100;
+  final ChallengeUseCase useCase = ChallengeUseCase();
   Hand _currentHand = Hand.Right;
   ChallengeData _rightBest =
       ChallengeData(Hand.Right, 120, DateTime(2018, 10, 14));
@@ -26,7 +28,8 @@ class ChallengeTabViewModel extends Model {
       ChallengeData(Hand.Left, 60, DateTime(2018, 10, 16));
   PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
   ChallengeState _currentState = ChallengeState.StandBy;
-  int _currentForce = 50;
+  double _currentForce = 0;
+  double _resultForce;
 
   Hand get currentHand => _currentHand;
 
@@ -34,7 +37,9 @@ class ChallengeTabViewModel extends Model {
 
   ChallengeData get leftBest => _leftBest;
 
-  int get currentForce => _currentForce;
+  int get currentForce => _currentForce.toInt();
+
+  int get resultForce => _resultForce?.toInt() ?? 0;
 
   double get currentForceRatio => _currentForce / maxForce;
 
@@ -61,25 +66,37 @@ class ChallengeTabViewModel extends Model {
 
   void startChallenge() {
     _currentState = ChallengeState.Doing;
-    _currentDialog.add(DialogType.Finished); //TODO: 本来は測定が終わったタイミングで出す。
+    useCase.observeChallengeResult.listen((result) {
+      _resultForce = result;
+      _currentDialog.add(DialogType.Finished);
+      notifyListeners();
+    });
     notifyListeners();
+    useCase.startChallenge();
   }
 
   void saveChallenge() {
     _currentState = ChallengeState.StandBy;
     notifyListeners();
+    useCase.stopChallenge();
   }
 
   void cancelChallenge() {
     _currentState = ChallengeState.StandBy;
     notifyListeners();
+    useCase.stopChallenge();
   }
 
   void init() {
     _currentDialog = PublishSubject<DialogType>();
+    useCase.observeForceWeight.listen((weight) {
+      _currentForce = weight < maxForce ? weight : maxForce;
+      notifyListeners();
+    });
   }
 
   void dispose() {
     _currentDialog.close();
+    useCase.stopChallenge();
   }
 }
