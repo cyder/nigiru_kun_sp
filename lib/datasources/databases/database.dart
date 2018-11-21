@@ -46,6 +46,11 @@ create table $tableCount (
   $countWeight real not null,
   $countTime text not null)
 ''');
+      await db.execute('''
+create table $tableGoal (
+  $goalDate text primary key,
+  $goalGoal integer not null)
+''');
     });
     return _db;
   }

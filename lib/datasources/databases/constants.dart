@@ -8,3 +8,7 @@ const String forceId = "id";
 const String forceValue = "value";
 const String forceTime = "time";
 const String forceHand = 'hand';
+
+const String tableGoal = "goals";
+const String goalDate = "date";
+const String goalGoal = "goal";
