@@ -31,10 +31,22 @@ class Count {
 }
 
 class CountProvider {
-  Database db;
+  Database _db;
 
-  Future open(String path) async {
-    db = await openDatabase(path, version: 1,
+  Future<Database> get db async {
+    if (_db != null) {
+      return _db;
+    }
+    _db = await initDb();
+    return _db;
+  }
+
+  Future<Database> initDb() async {
+    if(_db != null) {
+      return _db;
+    }
+    String path = await getDatabasesPath() + 'nigirukun.db';
+    _db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute('''
 create table $tableCount (
@@ -43,17 +55,18 @@ create table $tableCount (
   $countTime text not null)
 ''');
     });
+    return _db;
   }
 
   Future<void> insert(Count count) async {
-    await db.insert(tableCount, count.toMap());
+    await (await db).insert(tableCount, count.toMap());
   }
 
 
   Future<List<Count>> getCount(DateTime from, DateTime to) async {
     String qFrom = from?.toString() ?? "0000-01-01 00:00:00.000000";
     String qTo = to?.toString() ?? DateTime.now().toString();
-    List<Map> maps = await db.query(tableCount,
+    List<Map> maps = await (await db).query(tableCount,
       columns: [countId, countWeight, countTime],
       where: '$countTime >= ? AND $countTime <= ?',
       whereArgs: [qFrom, qTo]
@@ -65,5 +78,5 @@ create table $tableCount (
     return result;
   }
 
-  Future close() async => db.close();
+  Future close() async => (await db).close();
 }

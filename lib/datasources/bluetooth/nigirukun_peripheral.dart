@@ -54,9 +54,12 @@ class NigirukunPeripheral {
 
   /// connect peripheral. publish stream when discover services
   void connect() {
-    _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s) {
-      if (s == BluetoothDeviceState.connected) {
-        _rawPeripheral.discoverServices().then((s) {
+    if (_countStream.isClosed) {
+      _countStream = PublishSubject<int>();
+    }
+    _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s){
+      if(s == BluetoothDeviceState.connected){
+        _rawPeripheral.discoverServices().then((s){
           s.forEach((item) => _serviceStream.add(item));
           //find thresh characteristic
           s.forEach((s) {
@@ -75,6 +78,8 @@ class NigirukunPeripheral {
   /// disconnect peripheral
   void disconnect() {
     _deviceStateSubscription = null;
+    _countStream.close();
+    _forceStream.close();
   }
 
   /// read Threshold data
@@ -124,7 +129,10 @@ class NigirukunPeripheral {
   void didNotify(BluetoothCharacteristic characteristic) async {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value) {
+        _rawPeripheral.onValueChanged(characteristic).listen((value){
+          if(_forceStream.isClosed){
+            _forceStream = PublishSubject<List<int>>();
+          }
           _forceStream.add(NigirukunDataProcessor().toForce(value));
           print(
               'force -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
@@ -133,6 +141,9 @@ class NigirukunPeripheral {
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value) async {
+          if(_countStream.isClosed){
+            _countStream = PublishSubject<int>();
+          }
           _countStream.add(NigirukunDataProcessor().toCount(value));
           print(
               'count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
