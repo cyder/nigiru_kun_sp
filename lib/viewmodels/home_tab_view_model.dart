@@ -35,14 +35,16 @@ class HomeTabViewModel extends Model {
     });
   }
 
-  void dispose() {
-  }
+  void dispose() {}
 
   void setWeight(String value) {
-    if (value == '') {
-      _weight = 0;
+    final num = value == '' ? 0 : int.parse(value);
+    if (num == null || num < 3) {
+      _weight = 3;
+    } else if (num > 100) {
+      _weight = 100;
     } else {
-      _weight = int.parse(value);
+      _weight = num;
     }
     _countUseCase.setThreshWeight(_weight.toDouble());
     notifyListeners();
