@@ -25,4 +25,12 @@ class ChallengeUseCase {
         .map((_) => max)
         .take(1);
   }
+
+  void startChallenge() {
+    repository.disableCount();
+  }
+
+  void stopChallenge() {
+    repository.enableCount();
+  }
 }

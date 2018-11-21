@@ -72,16 +72,19 @@ class ChallengeTabViewModel extends Model {
       notifyListeners();
     });
     notifyListeners();
+    useCase.startChallenge();
   }
 
   void saveChallenge() {
     _currentState = ChallengeState.StandBy;
     notifyListeners();
+    useCase.stopChallenge();
   }
 
   void cancelChallenge() {
     _currentState = ChallengeState.StandBy;
     notifyListeners();
+    useCase.stopChallenge();
   }
 
   void init() {
@@ -94,5 +97,6 @@ class ChallengeTabViewModel extends Model {
 
   void dispose() {
     _currentDialog.close();
+    useCase.stopChallenge();
   }
 }
