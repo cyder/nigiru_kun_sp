@@ -14,7 +14,7 @@ class NigirukunPeripheral {
   StreamSubscription<BluetoothDeviceState> _deviceStateSubscription;
   PublishSubject<BluetoothService> _serviceStream =
       PublishSubject<BluetoothService>();
-  PublishSubject<List<int>> _forceStream = PublishSubject<List<int>>();
+  PublishSubject<List<double>> _forceStream = PublishSubject<List<double>>();
   PublishSubject<int> _countStream = PublishSubject<int>();
 
   /// NIGIRUUN unique uuid
@@ -131,8 +131,9 @@ class NigirukunPeripheral {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
           if(_forceStream.isClosed){
-            _forceStream = PublishSubject<List<int>>();
+            _forceStream = PublishSubject<List<double>>();
           }
+          print('data:' + NigirukunDataProcessor().toForce(value).toString());
           _forceStream.add(NigirukunDataProcessor().toForce(value));
           print(
               'force -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
