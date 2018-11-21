@@ -8,6 +8,8 @@ import 'dart:core';
 import 'package:nigiru_kun/datasources/databases/model/counts.dart';
 
 abstract class SensorRepository {
+  void setThreshWeight(int value);
+  int get getThreshWeight;
   Observable<List<NigirukunCountSensorData>> getCount(
       DateTime from, DateTime to);
 
@@ -15,6 +17,7 @@ abstract class SensorRepository {
       DateTime from, DateTime to);
 
   Observable<NigirukunCountSensorData> get observeLastInserted;
+  Observable<NigirukunForceSensorData> get observeForceData;
 }
 
 class SensorRepositoryImpl implements SensorRepository {
@@ -23,17 +26,22 @@ class SensorRepositoryImpl implements SensorRepository {
       SensorRepositoryImpl._internal();
   String path;
   CountProvider dbProvider = CountProvider();
-  PublishSubject<NigirukunCountSensorData> _latestNigirukun =
-      PublishSubject<NigirukunCountSensorData>();
 
+  int _latestWeight = -1;
+  PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
+  PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
   SensorRepositoryImpl._internal() {
     dbProvider.initDb();
 
     manager.countStream.listen((s) {
-      for (int i = 0; i < s.count; ++i) {
-        dbProvider.insert(Count(id: null, weight: 10, time: s.time.toString()));
-        _latestNigirukun.add(NigirukunCountSensorData(1, s.time));
-      }
+      Observable.fromFuture(manager.peripheral.readThresh())
+        .listen((weight) {
+          _latestWeight = weight;
+          for (int i = 0; i < s.count; ++i) {
+            dbProvider.insert(Count(id: null,weight: weight,time: s.time.toString()));
+            _latestNigirukun.add(NigirukunCountSensorData(1, s.time));
+          }
+      });
     });
   }
 
@@ -72,6 +80,18 @@ class SensorRepositoryImpl implements SensorRepository {
   }
 
   @override
-  Observable<NigirukunCountSensorData> get observeLastInserted =>
-      _latestNigirukun.stream;
+  Observable<NigirukunCountSensorData> get observeLastInserted => _latestNigirukun.stream;
+
+  @override
+  Observable<NigirukunForceSensorData> get observeForceData => manager.forceStream;
+
+  @override
+  int get getThreshWeight => _latestWeight;
+
+  @override
+  void setThreshWeight(int value) {
+    if (manager?.peripheral == null) return;
+    manager.peripheral.writeThresh(value);
+  }
+
 }

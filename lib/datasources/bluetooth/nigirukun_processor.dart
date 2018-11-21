@@ -13,4 +13,12 @@ class NigirukunDataProcessor {
       raw[6] + (raw[7] << 8)
     ].toList();
   }
+
+  int toThresh(List<int> raw) {
+    return raw[0] + (raw[1] << 8);
+  }
+
+  List<int> fromThresh(int t) {
+    return [t & ((1 << 8) - 1), t >> 8];
+  }
 }
