@@ -8,8 +8,8 @@ import 'dart:core';
 import 'package:nigiru_kun/datasources/databases/model/counts.dart';
 
 abstract class SensorRepository {
-  void setThreshWeight(int value);
-  int get getThreshWeight;
+  void setThreshWeight(double value);
+  double get getThreshWeight;
   Observable<List<NigirukunCountSensorData>> getCount(
       DateTime from, DateTime to);
 
@@ -27,7 +27,7 @@ class SensorRepositoryImpl implements SensorRepository {
   String path;
   CountProvider dbProvider = CountProvider();
 
-  int _latestWeight = -1;
+  double _latestWeight;
   PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
   PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
   SensorRepositoryImpl._internal() {
@@ -86,10 +86,10 @@ class SensorRepositoryImpl implements SensorRepository {
   Observable<NigirukunForceSensorData> get observeForceData => manager.forceStream;
 
   @override
-  int get getThreshWeight => _latestWeight;
+  double get getThreshWeight => _latestWeight;
 
   @override
-  void setThreshWeight(int value) {
+  void setThreshWeight(double value) {
     if (manager?.peripheral == null) return;
     manager.peripheral.writeThresh(value);
   }

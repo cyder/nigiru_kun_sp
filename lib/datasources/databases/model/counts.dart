@@ -8,7 +8,7 @@ final String countTime = "time";
 
 class Count {
   int id;
-  int weight;
+  double weight;
   String time;
 
   Count({this.id, this.weight, this.time});
@@ -51,7 +51,7 @@ class CountProvider {
       await db.execute('''
 create table $tableCount (
   $countId integer primary key autoincrement,
-  $countWeight integer not null,
+  $countWeight real not null,
   $countTime text not null)
 ''');
     });

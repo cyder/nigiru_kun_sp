@@ -27,23 +27,30 @@ class HomeTabViewModel extends Model {
   double get achievementRate => _currentGripNum / _goalGripNum;
 
   void init() {
-    countSubject = _countUseCase.observeTodayCount;
-    countSubject.listen((sum) {
-      print(sum);
+    _countUseCase.observeTodayCount.listen((sum) {
       _currentGripNum = sum;
       notifyListeners();
     });
+    _countUseCase.observetThreshWeight.listen((weight) {
+      if(_weight != weight) {
+        _weight = weight.toInt();
+        notifyListeners();
+      }
+    });
   }
 
-  void dispose() {
-  }
+  void dispose() {}
 
   void setWeight(String value) {
-    if (value == '') {
-      _weight = 0;
+    final num = value == '' ? 0 : int.parse(value);
+    if (num == null || num < 3) {
+      _weight = 3;
+    } else if (num > 100) {
+      _weight = 100;
     } else {
-      _weight = int.parse(value);
+      _weight = num;
     }
+    _countUseCase.setThreshWeight(_weight.toDouble());
     notifyListeners();
   }
 
