@@ -77,6 +77,7 @@ class ChallengeTabViewModel extends Model {
 
   void saveChallenge() {
     _currentState = ChallengeState.StandBy;
+    useCase.saveData(_resultForce.toInt(), _currentHand);
     notifyListeners();
     useCase.stopChallenge();
   }
