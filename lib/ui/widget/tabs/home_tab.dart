@@ -5,10 +5,31 @@ import 'package:nigiru_kun/ui/widget/tabs/home_tab/home_counter.dart';
 import 'package:nigiru_kun/ui/widget/forms/number_input.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   final HomeTabViewModel viewModel;
 
   HomeTab(this.viewModel);
+
+  @override
+  _HomeTabState createState() => new _HomeTabState(viewModel);
+}
+
+class _HomeTabState extends State<HomeTab> {
+  final HomeTabViewModel viewModel;
+
+  _HomeTabState(this.viewModel);
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.init();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    viewModel.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

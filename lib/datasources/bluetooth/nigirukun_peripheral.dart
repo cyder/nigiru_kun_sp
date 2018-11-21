@@ -52,6 +52,9 @@ class NigirukunPeripheral {
 
   /// connect peripheral. publish stream when discover services
   void connect() {
+    if (_countStream.isClosed) {
+      _countStream = PublishSubject<int>();
+    }
     _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s){
       if(s == BluetoothDeviceState.connected){
         _rawPeripheral.discoverServices().then((s){
@@ -65,6 +68,8 @@ class NigirukunPeripheral {
   /// disconnect peripheral
   void disconnect() {
     _deviceStateSubscription = null;
+    _countStream.close();
+    _forceStream.close();
   }
 
 
@@ -91,10 +96,12 @@ class NigirukunPeripheral {
   /// switch with characteristic and readValues
   /// - parameter characteristic Bluetooth Characteristic
   void didNotify(BluetoothCharacteristic characteristic) async {
-
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
+          if(_forceStream.isClosed){
+            _forceStream = PublishSubject<List<int>>();
+          }
           _forceStream.add(NigirukunDataProcessor().toForce(value));
           print('force -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
@@ -102,6 +109,9 @@ class NigirukunPeripheral {
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
+          if(_countStream.isClosed){
+            _countStream = PublishSubject<int>();
+          }
           _countStream.add(NigirukunDataProcessor().toCount(value));
           print('count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
