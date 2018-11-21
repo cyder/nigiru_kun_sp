@@ -14,11 +14,11 @@ class CountUseCase {
 
   //TODO: 接続時にもストリームを流すようにする
   Observable<double> get observetThreshWeight => repository.observeLastInserted
-      .map((_) => repository.getThreshWeight / 10)
+      .map((_) => repository.getThreshWeight)
       .distinct((a, b) => a == b);
 
   void setThreshWeight(double value) {
     print('data:' + (value * 10).toInt().toString());
-    repository.setThreshWeight((value * 10).toInt());
+    repository.setThreshWeight(value);
   }
 }

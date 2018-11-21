@@ -51,7 +51,7 @@ class CentralManager {
   Observable<NigirukunForceSensorData> get forceStream => _forceStream.stream;
 
 
-  Future<int> get getWeight => peripheral?.readThresh();
+  Future<double> get getWeight => peripheral?.readThresh();
 
   /// scan devices which has unique NIGIRUKUN service uuid
   /// - parameter timeout: [default 10 seconds] duration of scanning
