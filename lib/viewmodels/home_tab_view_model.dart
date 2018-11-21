@@ -44,6 +44,7 @@ class HomeTabViewModel extends Model {
     } else {
       _weight = int.parse(value);
     }
+    _countUseCase.setThreshWeight(_weight.toDouble());
     notifyListeners();
   }
 

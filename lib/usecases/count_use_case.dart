@@ -11,4 +11,9 @@ class CountUseCase {
         .observeCount(DateTime(now.year, now.month, now.day), null)
         .map((list) => list.map((data) => data.count).reduce((a, b) => a + b));
   }
+
+  void setThreshWeight(double value) {
+    print('data:' + (value * 10).toInt().toString());
+    repository.setThreshWeight((value * 10).toInt());
+  }
 }
