@@ -22,10 +22,8 @@ class ChallengeTabViewModel extends Model {
   final int maxForce = 100;
   final ChallengeUseCase useCase = ChallengeUseCase();
   Hand _currentHand = Hand.Right;
-  ChallengeData _rightBest =
-      ChallengeData(Hand.Right, 120, DateTime(2018, 10, 14));
-  ChallengeData _leftBest =
-      ChallengeData(Hand.Left, 60, DateTime(2018, 10, 16));
+  ChallengeData _rightBest;
+  ChallengeData _leftBest;
   PublishSubject<DialogType> _currentDialog = PublishSubject<DialogType>();
   ChallengeState _currentState = ChallengeState.StandBy;
   double _currentForce = 0;
@@ -78,8 +76,9 @@ class ChallengeTabViewModel extends Model {
   void saveChallenge() {
     _currentState = ChallengeState.StandBy;
     useCase.saveData(_resultForce.toInt(), _currentHand);
-    notifyListeners();
     useCase.stopChallenge();
+    _updateBestForce();
+    notifyListeners();
   }
 
   void cancelChallenge() {
@@ -94,10 +93,22 @@ class ChallengeTabViewModel extends Model {
       _currentForce = weight < maxForce ? weight : maxForce;
       notifyListeners();
     });
+    _updateBestForce();
   }
 
   void dispose() {
     _currentDialog.close();
     useCase.stopChallenge();
+  }
+
+  void _updateBestForce() {
+    useCase.leftBestForce.listen((data) {
+      _leftBest = data;
+      notifyListeners();
+    });
+    useCase.rightBestForce.listen((data) {
+      _rightBest = data;
+      notifyListeners();
+    });
   }
 }

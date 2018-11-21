@@ -45,4 +45,12 @@ class ChallengeUseCase {
       DateTime.now(),
     ));
   }
+
+  Observable<ChallengeData> get rightBestForce {
+    return dbRepository.observeBestForce(hand: Hand.Right);
+  }
+
+  Observable<ChallengeData> get leftBestForce {
+    return dbRepository.observeBestForce(hand: Hand.Left);
+  }
 }
