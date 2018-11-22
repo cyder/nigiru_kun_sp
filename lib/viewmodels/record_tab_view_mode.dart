@@ -4,40 +4,43 @@ import 'package:charts_flutter/flutter.dart';
 import 'dart:math' as math;
 
 import 'package:nigiru_kun/entities/hand.dart';
+import 'package:nigiru_kun/entities/count_data.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
+import 'package:nigiru_kun/usecases/count_use_case.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
-class HomeData {
-  final DateTime date;
-  final int count;
-
-  HomeData(this.date, this.count);
-}
-
 class RecordTabViewModel extends Model {
-  final formatter = new DateFormat('dd');
+  List<Series<CountData, DateTime>> _homeSeriesList = [];
 
-  List<Series<HomeData, DateTime>> _homeSeriesList;
-
-  List<Series<HomeData, DateTime>> get homeSeriesList => _homeSeriesList;
+  List<Series<CountData, DateTime>> get homeSeriesList => _homeSeriesList;
 
   List<Series<ChallengeData, DateTime>> _challengeSeriesList;
 
   List<Series<ChallengeData, DateTime>> get challengeSeriesList =>
       _challengeSeriesList;
 
+  final CountUseCase countUseCase = CountUseCase();
+
   RecordTabViewModel() {
+    countUseCase
+        .observeDayCount(DateTime.now().add(Duration(days: -14)), null)
+        .listen((data) {
+      _homeSeriesList = [
+        Series<CountData, DateTime>(
+          id: 'home',
+          colorFn: (_, __) => CustomColors.primaryChartColor,
+          domainFn: (CountData data, _) => data.date,
+          measureFn: (CountData data, _) => data.count,
+          data: data,
+        )
+      ];
+      print(data);
+      notifyListeners();
+    });
     final random = math.Random();
-    final List<HomeData> homeData = []; // TODO: 仮データ
     final List<ChallengeData> rightHandChallengeData = []; // TODO: 仮データ
     final List<ChallengeData> leftHandChallengeData = []; // TODO: 仮データ
 
-    for (int i = 0; i < 14; i++) {
-      homeData.insert(
-        0,
-        HomeData(DateTime.now().add(Duration(days: -i)), random.nextInt(1000)),
-      );
-    }
 
     for (int i = 0; i < 14; i++) {
       rightHandChallengeData.insert(
@@ -58,16 +61,6 @@ class RecordTabViewModel extends Model {
         ),
       );
     }
-
-    _homeSeriesList = [
-      Series<HomeData, DateTime>(
-        id: 'home',
-        colorFn: (_, __) => CustomColors.primaryChartColor,
-        domainFn: (HomeData data, _) => data.date,
-        measureFn: (HomeData data, _) => data.count,
-        data: homeData,
-      )
-    ];
 
     _challengeSeriesList = [
       Series<ChallengeData, DateTime>(

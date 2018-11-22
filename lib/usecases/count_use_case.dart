@@ -2,6 +2,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'package:nigiru_kun/repositorys/sensor_repository.dart';
 import 'package:nigiru_kun/repositorys/setting_repository.dart';
+import 'package:nigiru_kun/entities/count_data.dart';
 
 class CountUseCase {
   final SensorRepository _sensorRepository = SensorRepositoryImpl();
@@ -12,6 +13,32 @@ class CountUseCase {
     return _sensorRepository
         .observeCount(DateTime(now.year, now.month, now.day), null)
         .map((list) => list.map((data) => data.count).reduce((a, b) => a + b));
+  }
+
+  Observable<List<CountData>> observeDayCount(DateTime from, DateTime to) {
+    for (DateTime date = from;
+        date.compareTo(to ?? DateTime.now()) < 0;
+        date = date.add(Duration(days: 1))) {
+      print(date);
+    }
+    return repository.observeCount(from, to).map((data) {
+      List<CountData> result = [];
+      print(data);
+      for (DateTime date = from;
+          date.compareTo(to ?? DateTime.now()) < 0;
+          date = date.add(Duration(days: 1))) {
+        final countList = data
+            .where((item) =>
+                item.time.year == date.year &&
+                item.time.month == date.month &&
+                item.time.day == date.day)
+            .map((item) => item.count);
+        final sum =
+            countList.isNotEmpty ? countList.reduce((a, b) => a + b) : 0;
+        result.add(CountData(date, sum));
+      }
+      return result;
+    });
   }
 
   //TODO: 接続時にもストリームを流すようにする
