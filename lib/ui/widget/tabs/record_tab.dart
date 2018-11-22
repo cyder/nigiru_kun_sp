@@ -6,10 +6,25 @@ import 'package:nigiru_kun/ui/widget/charts/bar_times_chart.dart';
 import 'package:nigiru_kun/ui/widget/charts/times_chart.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
-class RecordTab extends StatelessWidget {
+class RecordTab extends StatefulWidget {
   final RecordTabViewModel viewModel;
 
   RecordTab(this.viewModel);
+
+  @override
+  _RecordTabState createState() => new _RecordTabState(viewModel);
+}
+
+class _RecordTabState extends State<RecordTab> {
+  final RecordTabViewModel viewModel;
+
+  _RecordTabState(this.viewModel);
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.init();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -53,7 +53,7 @@ class ForceProvider {
     String qTo = to?.toString() ?? DateTime.now().toString();
     String qhand = hand?.toString() ?? Hand.Right;
     String qWhere = hand != null
-        ? '$forceTime >= ? AND $forceTime <= ? AND $forceTime <= ? AND $forceHand == ?'
+        ? '$forceTime >= ? AND $forceTime <= ? AND $forceHand == ?'
         : '$forceTime >= ? AND $forceTime <= ?';
     List<String> qWhereArgs = hand != null ? [qFrom, qTo, qhand] : [qFrom, qTo];
 
