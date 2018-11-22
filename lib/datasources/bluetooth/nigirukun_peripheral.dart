@@ -145,12 +145,12 @@ class NigirukunPeripheral {
           if(_countStream.isClosed){
             _countStream = PublishSubject<int>();
           }
+          // reset
+          await _writeValue(characteristic, [0, 0, 0, 0]);
           _countStream.add(NigirukunDataProcessor().toCount(value));
           print(
               'count -> ${new DateTime.now().toString()} byte -> ${value.length.toString()}');
           value.forEach((item) => print(item));
-          // reset
-          await _writeValue(characteristic, [0, 0, 0, 0]);
         });
 
         break;
