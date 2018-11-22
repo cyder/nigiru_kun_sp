@@ -4,6 +4,7 @@ import 'package:nigiru_kun/repositorys/sensor_repository.dart';
 import 'package:nigiru_kun/repositorys/challenge_repository.dart';
 import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
+import 'package:nigiru_kun/utils/date.dart';
 
 class ChallengeUseCase {
   final SensorRepository sensorRepository = SensorRepositoryImpl();
@@ -28,6 +29,29 @@ class ChallengeUseCase {
         .where((weight) => weight < max / 2)
         .map((_) => max)
         .take(1);
+  }
+
+  Observable<List<ChallengeData>> observeChallengeList(
+      Hand hand, DateTime from, DateTime to) {
+    return dbRepository
+        .observeForce(hand: hand, from: from, to: to)
+        .map((list) {
+      List<ChallengeData> result = [];
+      list.forEach((data) {
+        if (result.isEmpty || !isSamaDay(result.last.date, data.date)) {
+          result.add(data);
+        } else if (result.last.force > data.force) {
+          result[result.length - 1] = data;
+        }
+      });
+      return result
+          .map((data) => ChallengeData(
+                data.hand,
+                data.force,
+                DateTime(data.date.year, data.date.month, data.date.day),
+              ))
+          .toList();
+    });
   }
 
   void startChallenge() {

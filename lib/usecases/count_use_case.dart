@@ -19,11 +19,9 @@ class CountUseCase {
     for (DateTime date = from;
         date.compareTo(to ?? DateTime.now()) < 0;
         date = date.add(Duration(days: 1))) {
-      print(date);
     }
     return repository.observeCount(from, to).map((data) {
       List<CountData> result = [];
-      print(data);
       for (DateTime date = from;
           date.compareTo(to ?? DateTime.now()) < 0;
           date = date.add(Duration(days: 1))) {

@@ -1,12 +1,12 @@
-import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:charts_flutter/flutter.dart';
-import 'dart:math' as math;
+import 'package:rxdart/rxdart.dart';
 
 import 'package:nigiru_kun/entities/hand.dart';
 import 'package:nigiru_kun/entities/count_data.dart';
 import 'package:nigiru_kun/entities/challenge_data.dart';
 import 'package:nigiru_kun/usecases/count_use_case.dart';
+import 'package:nigiru_kun/usecases/challenge_use_case.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
 class RecordTabViewModel extends Model {
@@ -14,12 +14,13 @@ class RecordTabViewModel extends Model {
 
   List<Series<CountData, DateTime>> get homeSeriesList => _homeSeriesList;
 
-  List<Series<ChallengeData, DateTime>> _challengeSeriesList;
+  List<Series<ChallengeData, DateTime>> _challengeSeriesList = [];
 
   List<Series<ChallengeData, DateTime>> get challengeSeriesList =>
       _challengeSeriesList;
 
   final CountUseCase countUseCase = CountUseCase();
+  final ChallengeUseCase challengeUseCase = ChallengeUseCase();
 
   RecordTabViewModel() {
     countUseCase
@@ -34,51 +35,41 @@ class RecordTabViewModel extends Model {
           data: data,
         )
       ];
-      print(data);
       notifyListeners();
     });
-    final random = math.Random();
-    final List<ChallengeData> rightHandChallengeData = []; // TODO: 仮データ
-    final List<ChallengeData> leftHandChallengeData = []; // TODO: 仮データ
 
+    Observable.combineLatest2(
+      challengeUseCase.observeChallengeList(
+          Hand.Right, DateTime.now().add(Duration(days: -30)), null),
+      challengeUseCase.observeChallengeList(
+          Hand.Left, DateTime.now().add(Duration(days: -30)), null),
+      (a, b) => <List<ChallengeData>>[a, b],
+    ).listen((data) {
+      _challengeSeriesList = [];
 
-    for (int i = 0; i < 14; i++) {
-      rightHandChallengeData.insert(
-        0,
-        ChallengeData(
-          Hand.Right,
-          random.nextInt(50),
-          DateTime.now().add(Duration(days: -i)),
-        ),
-      );
+      if(data[0] != null) {
+        _challengeSeriesList.add(Series<ChallengeData, DateTime>(
+          id: 'rightHand',
+          displayName: '右手',
+          colorFn: (_, __) => CustomColors.secondaryChartColor,
+          domainFn: (ChallengeData data, _) => data.date,
+          measureFn: (ChallengeData data, _) => data.force,
+          data: data[0],
+        ));
+      }
 
-      leftHandChallengeData.insert(
-        0,
-        ChallengeData(
-          Hand.Left,
-          random.nextInt(50),
-          DateTime.now().add(Duration(days: -i)),
-        ),
-      );
-    }
+      if(data[1] != null) {
+        _challengeSeriesList.add(Series<ChallengeData, DateTime>(
+          id: 'leftHand',
+          displayName: '左手',
+          colorFn: (_, __) => CustomColors.tertiaryChartColor,
+          domainFn: (ChallengeData data, _) => data.date,
+          measureFn: (ChallengeData data, _) => data.force,
+          data: data[1],
+        ));
+      }
 
-    _challengeSeriesList = [
-      Series<ChallengeData, DateTime>(
-        id: 'rightHand',
-        displayName: '右手',
-        colorFn: (_, __) => CustomColors.secondaryChartColor,
-        domainFn: (ChallengeData data, _) => data.date,
-        measureFn: (ChallengeData data, _) => data.force,
-        data: rightHandChallengeData,
-      ),
-      Series<ChallengeData, DateTime>(
-        id: 'leftHand',
-        displayName: '左手',
-        colorFn: (_, __) => CustomColors.tertiaryChartColor,
-        domainFn: (ChallengeData data, _) => data.date,
-        measureFn: (ChallengeData data, _) => data.force,
-        data: leftHandChallengeData,
-      )
-    ];
+      notifyListeners();
+    });
   }
 }
