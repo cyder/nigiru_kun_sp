@@ -20,7 +20,7 @@ class CountUseCase {
         date.compareTo(to ?? DateTime.now()) < 0;
         date = date.add(Duration(days: 1))) {
     }
-    return repository.observeCount(from, to).map((data) {
+    return _sensorRepository.observeCount(from, to).map((data) {
       List<CountData> result = [];
       for (DateTime date = from;
           date.compareTo(to ?? DateTime.now()) < 0;
