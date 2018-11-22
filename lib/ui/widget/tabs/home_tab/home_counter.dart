@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
-import 'package:nigiru_kun/utils/color.dart';
 import 'package:nigiru_kun/ui/widget/bars/circular_bar.dart';
 
 class HomeCounter extends StatelessWidget {
@@ -12,7 +11,7 @@ class HomeCounter extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 20),
               child: CircularBar(
                 percent:
-                    model.achievementRate < 1.0 ? model.achievementRate : 1.0,
+                    model.achievementRate % 1.0,
                 center: new Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -48,8 +47,8 @@ class HomeCounter extends StatelessWidget {
                     ),
                   ],
                 ),
-                progressColor: CustomColors.primaryColor,
-                backgroundColor: CustomColors.primaryTranslucentColor,
+                progressColor: model.counterColor,
+                backgroundColor: model.counterBackgroundColor,
               ),
             ));
   }

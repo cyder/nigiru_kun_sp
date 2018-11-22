@@ -1,8 +1,10 @@
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter/material.dart';
 
 import 'package:nigiru_kun/usecases/count_use_case.dart';
+import 'package:nigiru_kun/utils/color.dart';
 
 class HomeTabViewModel extends Model {
   CountUseCase _countUseCase = CountUseCase();
@@ -32,7 +34,7 @@ class HomeTabViewModel extends Model {
       notifyListeners();
     });
     _countUseCase.observetThreshWeight.listen((weight) {
-      if(_weight != weight) {
+      if (_weight != weight) {
         _weight = weight.toInt();
         notifyListeners();
       }
@@ -66,5 +68,22 @@ class HomeTabViewModel extends Model {
     }
     _countUseCase.setGoal(_goalGripNum);
     notifyListeners();
+  }
+
+  Color get counterColor {
+    if (achievementRate.toInt() % 2 == 0) {
+      return CustomColors.primaryColor;
+    }
+    return CustomColors.orange;
+  }
+
+  Color get counterBackgroundColor {
+    if (achievementRate < 1) {
+      return CustomColors.primaryTranslucentColor;
+    }
+    if (achievementRate.toInt() % 2 == 0) {
+      return CustomColors.orange;
+    }
+    return CustomColors.primaryColor;
   }
 }
