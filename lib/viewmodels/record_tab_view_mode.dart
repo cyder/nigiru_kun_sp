@@ -22,7 +22,7 @@ class RecordTabViewModel extends Model {
   final CountUseCase countUseCase = CountUseCase();
   final ChallengeUseCase challengeUseCase = ChallengeUseCase();
 
-  RecordTabViewModel() {
+  void init() {
     countUseCase
         .observeDayCount(DateTime.now().add(Duration(days: -14)), null)
         .listen((data) {
