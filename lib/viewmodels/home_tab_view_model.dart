@@ -37,6 +37,10 @@ class HomeTabViewModel extends Model {
         notifyListeners();
       }
     });
+    _countUseCase.observetGoal.listen((goal) {
+      _goalGripNum = goal;
+      notifyListeners();
+    });
   }
 
   void dispose() {}
@@ -60,6 +64,7 @@ class HomeTabViewModel extends Model {
     } else {
       _goalGripNum = int.parse(value);
     }
+    _countUseCase.setGoal(_goalGripNum);
     notifyListeners();
   }
 }
