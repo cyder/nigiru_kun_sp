@@ -43,7 +43,7 @@ class GoalProvider {
   }
 
   Future<void> update(Goal goal) async {
-    if(getGoal(goal.date) == null) {
+    if((await getGoal(goal.date)) == null) {
       insert(goal);
     }
     else {
