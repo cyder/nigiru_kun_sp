@@ -79,8 +79,14 @@ class _ChallengeTabState extends State<ChallengeTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BestChallenge(),
-                  Expanded(child: Center(child: ChallengeMeter())),
+                  Expanded(
+                      child: SingleChildScrollView(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                        BestChallenge(),
+                        Center(child: ChallengeMeter()),
+                      ]))),
                   model.currentState == ChallengeState.StandBy
                       ? WideButton(
                           label: '開始',
