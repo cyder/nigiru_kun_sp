@@ -40,7 +40,7 @@ class ChallengeUseCase {
       list.forEach((data) {
         if (result.isEmpty || !isSamaDay(result.last.date, data.date)) {
           result.add(data);
-        } else if (result.last.force > data.force) {
+        } else if (result.last.force < data.force) {
           result[result.length - 1] = data;
         }
       });
