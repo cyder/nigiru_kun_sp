@@ -37,7 +37,7 @@ class CentralManager {
       _scanSubject.stream
           .where((scanResult) => scanResult.advertisementData.connectable)
           .where((scanResult) => scanResult.advertisementData.serviceUuids
-            .where((item) => item == NigirukunServicesProfile.NIGIRUKUN_SERVICE).length == 1
+            .where((item) => (item == NigirukunServicesProfile.NIGIRUKUN_SERVICE || item.toLowerCase() == NigirukunServicesProfile.NIGIRUKUN_SERVICE)).length > 0
           )
           .map((scanResult) => NigirukunPeripheral.scanResult(scanResult))
           .distinct(([a, b]) => a.uuid == b.uuid);
