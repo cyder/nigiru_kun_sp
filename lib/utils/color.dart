@@ -14,4 +14,5 @@ class CustomColors {
   static final Color tertiaryTranslucentColor = new Color(0x3358BCDC);
   static final charts.Color tertiaryChartColor =
       charts.Color(r: 88, g: 188, b: 220);
+  static final Color orange = Color(0xfffbb03b);
 }
