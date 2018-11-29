@@ -64,10 +64,11 @@ class HomeTabViewModel extends Model {
   }
 
   void setGoalGripNum(String value) {
-    if (value == '') {
-      _goalGripNum = 0;
+    final num = value == '' ? 0 : int.parse(value);
+    if (value == null || num  == 0) {
+      _goalGripNum = 1;
     } else {
-      _goalGripNum = int.parse(value);
+      _goalGripNum = num;
     }
     _countUseCase.setGoal(_goalGripNum);
     notifyListeners();
