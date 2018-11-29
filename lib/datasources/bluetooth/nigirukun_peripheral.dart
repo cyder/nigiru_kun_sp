@@ -77,6 +77,7 @@ class NigirukunPeripheral {
 
   /// disconnect peripheral
   void disconnect() {
+    _rawPeripheral = null;
     _deviceStateSubscription = null;
     _countStream.close();
     _forceStream.close();
@@ -114,8 +115,6 @@ class NigirukunPeripheral {
         }
         if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC ||
             characteristic.uuid.toString() ==  NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
-          // reset
-          await _writeValue(characteristic, [0, 0, 0, 0]);
           await _rawPeripheral.setNotifyValue(characteristic, true);
         }
       });
@@ -160,10 +159,10 @@ class NigirukunPeripheral {
 
   Future<void> _writeValue(
       BluetoothCharacteristic characteristic, List<int> value) async {
-    await _rawPeripheral.writeCharacteristic(characteristic, value, type: CharacteristicWriteType.withResponse);
+    await _rawPeripheral?.writeCharacteristic(characteristic, value, type: CharacteristicWriteType.withResponse);
   }
 
   Future<List<int>> _readValue(BluetoothCharacteristic characteristic) async {
-    return await _rawPeripheral.readCharacteristic(characteristic);
+    return await _rawPeripheral?.readCharacteristic(characteristic);
   }
 }
