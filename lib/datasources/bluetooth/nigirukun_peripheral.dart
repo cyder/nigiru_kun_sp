@@ -59,7 +59,7 @@ class NigirukunPeripheral {
     }
     _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s){
       if(s == BluetoothDeviceState.connected){
-        _rawPeripheral.discoverServices().then((s){
+        _rawPeripheral?.discoverServices().then((s){
           s.forEach((item) => _serviceStream.add(item));
           //find thresh characteristic
           s.forEach((s) {
@@ -111,11 +111,11 @@ class NigirukunPeripheral {
       await Future.forEach(s, (characteristic) async {
         if (characteristic.uuid.toString() ==
             NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC) {
-          await _rawPeripheral.setNotifyValue(characteristic, true);
+          await _rawPeripheral?.setNotifyValue(characteristic, true);
         }
         if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC ||
             characteristic.uuid.toString() ==  NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
-          await _rawPeripheral.setNotifyValue(characteristic, true);
+          await _rawPeripheral?.setNotifyValue(characteristic, true);
         }
       });
       s.forEach((item) async => await didNotify(item));
@@ -127,7 +127,7 @@ class NigirukunPeripheral {
   Future<void> didNotify(BluetoothCharacteristic characteristic) async {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value){
+        _rawPeripheral?.onValueChanged(characteristic)?.listen((value){
           if(_forceStream.isClosed){
             _forceStream = PublishSubject<List<double>>();
           }
@@ -139,7 +139,7 @@ class NigirukunPeripheral {
         });
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value) async {
+        _rawPeripheral?.onValueChanged(characteristic)?.listen((value) async {
           if(_countStream.isClosed){
             _countStream = PublishSubject<int>();
           }
