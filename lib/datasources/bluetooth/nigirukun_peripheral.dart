@@ -88,8 +88,7 @@ class NigirukunPeripheral {
     if (_threshCharacteristic == null) {
       return thresh;
     }
-    Future<List<int>> raw = _readValue(_threshCharacteristic);
-    await raw.then((value) {
+    await _readValue(_threshCharacteristic).then((value) {
       thresh = NigirukunDataProcessor().toThresh(value);
       print("thresh ======== > ${thresh.toString()}");
     });
@@ -106,27 +105,35 @@ class NigirukunPeripheral {
   }
 
   /// start Notify
-  void startNotify() {
-    _serviceStream.map((item) => item.characteristics).listen((s) {
-      Future.forEach(s, (characteristic) async {
+  Future<void> startNotify() async {
+    _serviceStream.map((item) => item.characteristics).listen((s) async {
+      await Future.forEach(s, (characteristic) async {
         if (characteristic.uuid.toString() ==
             NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC) {
           await _rawPeripheral.setNotifyValue(characteristic, true);
         }
         if (characteristic.uuid.toString() ==
             NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC) {
+
           // reset
-          _writeValue(characteristic, [0, 0, 0, 0]);
+          await _writeValue(characteristic, [0, 0, 0, 0]);
+          await _rawPeripheral.setNotifyValue(characteristic, true);
+        }
+        if (characteristic.uuid.toString() ==
+            NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
+          // reset
+          await _writeValue(characteristic, [0, 0, 0, 0]);
           await _rawPeripheral.setNotifyValue(characteristic, true);
         }
       });
-      s.forEach((item) => didNotify(item));
+      print("here");
+      s.forEach((item) async => await didNotify(item));
     });
   }
 
   /// switch with characteristic and readValues
   /// - parameter characteristic Bluetooth Characteristic
-  void didNotify(BluetoothCharacteristic characteristic) async {
+  Future<void> didNotify(BluetoothCharacteristic characteristic) async {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
         _rawPeripheral.onValueChanged(characteristic).listen((value){
@@ -161,7 +168,7 @@ class NigirukunPeripheral {
 
   Future<void> _writeValue(
       BluetoothCharacteristic characteristic, List<int> value) async {
-    await _rawPeripheral.writeCharacteristic(characteristic, value);
+    await _rawPeripheral.writeCharacteristic(characteristic, value, type: CharacteristicWriteType.withResponse);
   }
 
   Future<List<int>> _readValue(BluetoothCharacteristic characteristic) async {
