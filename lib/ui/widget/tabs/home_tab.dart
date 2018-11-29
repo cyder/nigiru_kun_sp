@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:nigiru_kun/viewmodels/home_tab_view_model.dart';
 import 'package:nigiru_kun/ui/widget/tabs/home_tab/home_counter.dart';
 import 'package:nigiru_kun/ui/widget/forms/number_input.dart';
+import 'package:nigiru_kun/ui/widget/effects/goal_effect.dart';
 import 'package:nigiru_kun/utils/color.dart';
 
 class HomeTab extends StatefulWidget {
@@ -36,43 +37,48 @@ class _HomeTabState extends State<HomeTab> {
     return new ScopedModel<HomeTabViewModel>(
       model: viewModel,
       child: new ScopedModelDescendant<HomeTabViewModel>(
-          builder: (context, child, model) => new SingleChildScrollView(
-                  child: new Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 30.0,
-                  horizontal: 20.0,
-                ),
-                child: new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    new Center(
-                        child: new Text(
-                      'Today ${model.today}',
-                      style: const TextStyle(fontSize: 28.0),
-                    )),
-                    new Center(child: HomeCounter()),
-                    new Text(
-                      'Settings',
-                      style: new TextStyle(
-                        fontSize: 32.0,
-                        color: CustomColors.primaryColor,
-                      ),
+          builder: (context, child, model) => Stack(
+                children: <Widget>[
+                  SingleChildScrollView(
+                      child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 30.0,
+                      horizontal: 20.0,
                     ),
-                    new NumberInput(
-                      labelText: 'Weight',
-                      value: model.weight,
-                      unit: 'kg',
-                      onEditingComplete: model.setWeight,
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        new Center(
+                            child: new Text(
+                          'Today ${model.today}',
+                          style: const TextStyle(fontSize: 28.0),
+                        )),
+                        new Center(child: HomeCounter()),
+                        new Text(
+                          'Settings',
+                          style: new TextStyle(
+                            fontSize: 32.0,
+                            color: CustomColors.primaryColor,
+                          ),
+                        ),
+                        new NumberInput(
+                          labelText: 'Weight',
+                          value: model.weight,
+                          unit: 'kg',
+                          onEditingComplete: model.setWeight,
+                        ),
+                        new NumberInput(
+                          labelText: 'Goal',
+                          value: model.goalGripNum,
+                          unit: '回',
+                          onEditingComplete: model.setGoalGripNum,
+                        ),
+                      ],
                     ),
-                    new NumberInput(
-                      labelText: 'Goal',
-                      value: model.goalGripNum,
-                      unit: '回',
-                      onEditingComplete: model.setGoalGripNum,
-                    ),
-                  ],
-                ),
-              ))),
+                  )),
+                  GoalEffect(),
+                ],
+              )),
     );
   }
 }
