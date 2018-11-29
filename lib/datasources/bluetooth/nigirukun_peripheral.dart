@@ -59,7 +59,7 @@ class NigirukunPeripheral {
     }
     _deviceStateSubscription = rawPeripheral.onStateChanged().listen((s){
       if(s == BluetoothDeviceState.connected){
-        _rawPeripheral.discoverServices().then((s){
+        _rawPeripheral?.discoverServices().then((s){
           s.forEach((item) => _serviceStream.add(item));
           //find thresh characteristic
           s.forEach((s) {
@@ -77,6 +77,7 @@ class NigirukunPeripheral {
 
   /// disconnect peripheral
   void disconnect() {
+    _rawPeripheral = null;
     _deviceStateSubscription = null;
     _countStream.close();
     _forceStream.close();
@@ -110,13 +111,11 @@ class NigirukunPeripheral {
       await Future.forEach(s, (characteristic) async {
         if (characteristic.uuid.toString() ==
             NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC) {
-          await _rawPeripheral.setNotifyValue(characteristic, true);
+          await _rawPeripheral?.setNotifyValue(characteristic, true);
         }
         if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC ||
             characteristic.uuid.toString() ==  NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
-          // reset
-          await _writeValue(characteristic, [0, 0, 0, 0]);
-          await _rawPeripheral.setNotifyValue(characteristic, true);
+          await _rawPeripheral?.setNotifyValue(characteristic, true);
         }
       });
       s.forEach((item) async => await didNotify(item));
@@ -128,7 +127,7 @@ class NigirukunPeripheral {
   Future<void> didNotify(BluetoothCharacteristic characteristic) async {
     switch (characteristic.uuid.toString()) {
       case NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value){
+        _rawPeripheral?.onValueChanged(characteristic)?.listen((value){
           if(_forceStream.isClosed){
             _forceStream = PublishSubject<List<double>>();
           }
@@ -140,7 +139,7 @@ class NigirukunPeripheral {
         });
         break;
       case NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC:
-        _rawPeripheral.onValueChanged(characteristic).listen((value) async {
+        _rawPeripheral?.onValueChanged(characteristic)?.listen((value) async {
           if(_countStream.isClosed){
             _countStream = PublishSubject<int>();
           }
@@ -160,10 +159,10 @@ class NigirukunPeripheral {
 
   Future<void> _writeValue(
       BluetoothCharacteristic characteristic, List<int> value) async {
-    await _rawPeripheral.writeCharacteristic(characteristic, value, type: CharacteristicWriteType.withResponse);
+    await _rawPeripheral?.writeCharacteristic(characteristic, value, type: CharacteristicWriteType.withResponse);
   }
 
   Future<List<int>> _readValue(BluetoothCharacteristic characteristic) async {
-    return await _rawPeripheral.readCharacteristic(characteristic);
+    return await _rawPeripheral?.readCharacteristic(characteristic);
   }
 }

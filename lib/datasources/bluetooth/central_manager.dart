@@ -84,6 +84,9 @@ class CentralManager {
 
     // Update the connection state
     peripheral.rawPeripheral.state.then((s){
+      if (_deviceStateSubject.isClosed){
+        _deviceStateSubject = PublishSubject<BluetoothDeviceState>();
+      }
       _deviceStateSubject.add(s);
     });
     peripheral.connect();
