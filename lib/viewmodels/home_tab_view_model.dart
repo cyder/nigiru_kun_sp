@@ -20,7 +20,7 @@ class HomeTabViewModel extends Model {
     return formatter.format(today);
   }
 
-  bool get isAchieved => currentGripNum >= goalGripNum;
+  bool get isAchieved => achievementRate >= 1.0;
 
   int get currentGripNum => _currentGripNum;
 
@@ -28,7 +28,8 @@ class HomeTabViewModel extends Model {
 
   int get weight => _weight;
 
-  double get achievementRate => _currentGripNum / _goalGripNum;
+  double get achievementRate =>
+      _goalGripNum != 0 ? _currentGripNum / _goalGripNum : 0;
 
   void init() {
     _countUseCase.observeTodayCount.listen((sum) {
