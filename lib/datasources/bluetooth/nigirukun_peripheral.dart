@@ -112,21 +112,13 @@ class NigirukunPeripheral {
             NigirukunCharacteristicProfile.FORCE_CHARACTERISTIC) {
           await _rawPeripheral.setNotifyValue(characteristic, true);
         }
-        if (characteristic.uuid.toString() ==
-            NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC) {
-
-          // reset
-          await _writeValue(characteristic, [0, 0, 0, 0]);
-          await _rawPeripheral.setNotifyValue(characteristic, true);
-        }
-        if (characteristic.uuid.toString() ==
-            NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
+        if (characteristic.uuid.toString() == NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC ||
+            characteristic.uuid.toString() ==  NigirukunCharacteristicProfile.COUNT_CHARACTERISTIC.toUpperCase()) {
           // reset
           await _writeValue(characteristic, [0, 0, 0, 0]);
           await _rawPeripheral.setNotifyValue(characteristic, true);
         }
       });
-      print("here");
       s.forEach((item) async => await didNotify(item));
     });
   }
