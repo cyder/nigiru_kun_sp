@@ -76,7 +76,7 @@ class _HomeTabState extends State<HomeTab> {
                       ],
                     ),
                   )),
-                  GoalEffect(),
+                  model.isAchieved ? GoalEffect() : Container(),
                 ],
               )),
     );

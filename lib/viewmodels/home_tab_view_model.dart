@@ -20,6 +20,8 @@ class HomeTabViewModel extends Model {
     return formatter.format(today);
   }
 
+  bool get isAchieved => currentGripNum >= goalGripNum;
+
   int get currentGripNum => _currentGripNum;
 
   int get goalGripNum => _goalGripNum;
