@@ -1,3 +1,4 @@
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:core';
 
@@ -30,7 +31,8 @@ class NigirukunDatabase {
     if (_db != null) {
       return _db;
     }
-    String path = await getDatabasesPath() + 'nigirukun.db';
+
+    String path = join((await getDatabasesPath()), 'nigirukun.db');
     _db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute('''
