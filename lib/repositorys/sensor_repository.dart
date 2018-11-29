@@ -17,7 +17,6 @@ abstract class SensorRepository {
 
   Observable<NigirukunCountSensorData> get observeLastInserted;
   Observable<NigirukunForceSensorData> get observeForceData;
-  Observable<double> get observeInitialThreshWeight;
   void disableCount();
   void enableCount();
 }
@@ -29,12 +28,10 @@ class SensorRepositoryImpl implements SensorRepository {
   String path;
   CountProvider dbProvider = CountProvider();
 
-  double _initialThreshWeight;
   double _latestWeight;
   bool _enableCount = true;
   PublishSubject<List<NigirukunCountSensorData>> _insertedStream = PublishSubject<List<NigirukunCountSensorData>>();
   PublishSubject<NigirukunCountSensorData> _latestNigirukun = PublishSubject<NigirukunCountSensorData>();
-  PublishSubject<double> _initialThreshWeightStream = PublishSubject<double>();
   SensorRepositoryImpl._internal() {
     dbProvider.initDb();
 
@@ -42,10 +39,6 @@ class SensorRepositoryImpl implements SensorRepository {
       Observable.fromFuture(manager.peripheral.readThresh())
         .where((_) => _enableCount)
         .listen((weight) {
-          if(_initialThreshWeight == null) {
-            _initialThreshWeight = weight;
-            _initialThreshWeightStream.add(weight);
-          }
           _latestWeight = weight;
           for (int i = 0; i < s.count; ++i) {
             dbProvider.insert(Count(id: null,weight: weight,time: s.time.toString()));
@@ -117,8 +110,5 @@ class SensorRepositoryImpl implements SensorRepository {
     manager.peripheral.writeThresh(getThreshWeight ?? 15);
     _enableCount = true;
   }
-
-  @override
-  Observable<double> get observeInitialThreshWeight => _initialThreshWeightStream;
 
 }
